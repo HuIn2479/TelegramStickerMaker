@@ -86,9 +86,6 @@ const handleFilesSelected = (files) => {
                     file.type === 'video/webm' ||
                     file.type === 'video/quicktime' || // MOV
                     file.type === 'video/x-msvideo'    // AVI
-    if (!isValid) {
-      console.warn(`跳过不支持的文件: ${file.name} (${file.type})`)
-    }
     return isValid
   })
   
@@ -143,7 +140,6 @@ const loadVideoMetadata = (task) => {
       task.width = 512
       task.height = 512
       task.endTime = 3
-      console.warn('Metadata timeout, using defaults for:', task.name)
     }
     video.src = ''
     video.load()
@@ -162,7 +158,6 @@ const loadVideoMetadata = (task) => {
   
   video.onerror = (e) => {
     clearTimeout(timeout)
-    console.warn('Failed to load video metadata for:', task.name, e)
     // 对于 GIF，使用默认值继续
     if (task.file.type === 'image/gif') {
       task.duration = 3

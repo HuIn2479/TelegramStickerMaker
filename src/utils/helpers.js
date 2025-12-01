@@ -74,7 +74,6 @@ export function getHistory() {
     
     return validHistory
   } catch (e) {
-    console.error('读取历史记录失败:', e)
     return []
   }
 }

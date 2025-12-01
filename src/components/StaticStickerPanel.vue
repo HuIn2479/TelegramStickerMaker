@@ -86,9 +86,6 @@ const handleFilesSelected = (files) => {
                     file.type === 'image/webp' || 
                     file.type === 'image/jpeg' || 
                     file.type === 'image/jpg'
-    if (!isValid) {
-      console.warn(`跳过不支持的文件: ${file.name} (${file.type})`)
-    }
     return isValid
   })
   
@@ -136,7 +133,6 @@ const loadImageMetadata = (task) => {
     img.src = ''
   }
   img.onerror = () => {
-    console.warn('Failed to load image metadata for:', task.name)
     img.src = ''
   }
   img.src = task.previewUrl
