@@ -253,10 +253,10 @@ function convertToWebm(inputPath, outputPath, scale, startTime = 0, duration = 3
     });
 }
 
-// 清理旧文件 (每小时清理一次超过1小时的文件)
+// 清理旧文件 (每小时清理一次超过24小时的文件，与前端历史记录保持一致)
 setInterval(() => {
     const now = Date.now();
-    const maxAge = 60 * 60 * 1000; // 1小时
+    const maxAge = 24 * 60 * 60 * 1000; // 24小时
 
     [uploadDir, outputDir].forEach(dir => {
         fs.readdirSync(dir).forEach(file => {
