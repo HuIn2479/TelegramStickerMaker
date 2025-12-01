@@ -159,28 +159,43 @@ const loadVideoMetadata = (task) => {
   video.preload = 'metadata' // 只加载元数据，不加载完整视频
   video.src = task.previewUrl
   
+  // 设置超时，避免无限等待
+  const timeout = setTimeout(() => {
+    if (task.duration === 0) {
+      // 使用默认值作为回退
+      task.duration = 3
+      task.width = 512
+      task.height = 512
+      task.endTime = 3
+      console.warn('Metadata timeout, using defaults for:', task.name)
+    }
+    video.src = ''
+    video.load()
+  }, 2000)
+  
   video.onloadedmetadata = () => {
-    task.duration = video.duration || 0
-    task.width = video.videoWidth || 0
-    task.height = video.videoHeight || 0
+    clearTimeout(timeout)
+    task.duration = video.duration || 3
+    task.width = video.videoWidth || 512
+    task.height = video.videoHeight || 512
     task.endTime = Math.min(3, task.duration)
     // 清理视频元素
     video.src = ''
     video.load()
   }
   
-  video.onerror = () => {
-    console.warn('Failed to load video metadata for:', task.name)
+  video.onerror = (e) => {
+    clearTimeout(timeout)
+    console.warn('Failed to load video metadata for:', task.name, e)
+    // 对于 GIF 或本地模式，使用默认值继续
+    if (task.file.type === 'image/gif' || useLocalProcessing.value) {
+      task.duration = 3
+      task.width = 512
+      task.height = 512
+      task.endTime = 3
+    }
     video.src = ''
-  }
-
-  if (task.file.type === 'image/gif') {
-    setTimeout(() => {
-      if (task.duration === 0) {
-        task.duration = 3
-        task.endTime = 3
-      }
-    }, 500)
+    video.load()
   }
 }
 

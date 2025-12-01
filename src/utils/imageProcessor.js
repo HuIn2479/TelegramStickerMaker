@@ -126,11 +126,19 @@ export async function convertVideoLocally(file, startTime = 0, endTime = 3) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
 
+    // 设置超时保护
+    const timeout = setTimeout(() => {
+      reject(new Error('视频加载超时，请尝试服务器模式或更换文件'))
+      URL.revokeObjectURL(video.src)
+      video.src = ''
+    }, 10000) // 10秒超时
+
     video.onloadedmetadata = async () => {
       try {
+        clearTimeout(timeout)
         const duration = Math.min(endTime - startTime, 3)
-        const width = video.videoWidth
-        const height = video.videoHeight
+        const width = video.videoWidth || 512
+        const height = video.videoHeight || 512
 
         // 计算缩放尺寸
         let newWidth, newHeight
@@ -149,8 +157,12 @@ export async function convertVideoLocally(file, startTime = 0, endTime = 3) {
         // 对于 GIF，捕获第一帧作为静态图
         video.currentTime = startTime
         
-        await new Promise(resolve => {
-          video.onseeked = resolve
+        await new Promise((seekResolve, seekReject) => {
+          video.onseeked = seekResolve
+          setTimeout(() => seekReject(new Error('Seek timeout')), 5000)
+        }).catch(() => {
+          // Seek 失败时直接使用当前帧
+          console.warn('Seek failed, using current frame')
         })
 
         ctx.drawImage(video, 0, 0, newWidth, newHeight)
@@ -168,7 +180,7 @@ export async function convertVideoLocally(file, startTime = 0, endTime = 3) {
             original: {
               width,
               height,
-              duration: video.duration,
+              duration: video.duration || duration,
               size: file.size
             },
             result: {
@@ -183,17 +195,23 @@ export async function convertVideoLocally(file, startTime = 0, endTime = 3) {
           })
 
           URL.revokeObjectURL(video.src)
+          video.src = ''
         }, 'image/webp', 0.9)
       } catch (error) {
+        clearTimeout(timeout)
         reject(error)
       }
     }
 
-    video.onerror = () => {
-      reject(new Error('视频加载失败'))
+    video.onerror = (e) => {
+      clearTimeout(timeout)
+      console.error('Video load error:', e)
+      reject(new Error('视频加载失败，请确认文件格式正确或尝试服务器模式'))
       URL.revokeObjectURL(video.src)
+      video.src = ''
     }
 
     video.src = URL.createObjectURL(file)
+    video.load() // 显式调用 load
   })
 }
