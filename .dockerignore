@@ -1,0 +1,22 @@
+# 忽略 node_modules
+node_modules/
+npm-debug.log
+
+# 忽略临时文件
+uploads/
+output/
+legacy/
+
+# 忽略开发文件
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# 忽略文档
+*.md
+!README.md
+
+# 忽略配置文件
+.env
+.env.local
