@@ -1,22 +1,40 @@
-FROM node:18-alpine
+# 构建阶段
+FROM node:18-alpine AS builder
 
-# 安装 FFmpeg
-RUN apk add --no-cache ffmpeg
-
-# 设置工作目录
 WORKDIR /app
 
 # 复制 package 文件
 COPY package*.json ./
 
-# 安装依赖
-RUN npm ci --only=production
+# 安装所有依赖（包括 devDependencies，用于构建）
+# 明确不设置 NODE_ENV，确保安装 devDependencies
+RUN npm install && \
+    echo "Checking vite installation:" && \
+    npm list vite || true
 
 # 复制源代码
 COPY . .
 
 # 构建前端
 RUN npm run build
+
+# 生产阶段
+FROM node:18-alpine
+
+# 安装 FFmpeg
+RUN apk add --no-cache ffmpeg
+
+WORKDIR /app
+
+# 复制 package 文件
+COPY package*.json ./
+
+# 只安装生产依赖
+RUN npm ci --only=production
+
+# 从构建阶段复制构建产物
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/server.js ./server.js
 
 # 创建必要的目录
 RUN mkdir -p uploads output
@@ -28,4 +46,4 @@ EXPOSE 3000
 ENV NODE_ENV=production
 
 # 启动应用
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
