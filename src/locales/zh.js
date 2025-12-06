@@ -6,7 +6,8 @@ export default {
   tabs: {
     static: '静态贴纸',
     video: '视频贴纸',
-    history: '历史记录'
+    history: '历史记录',
+    upload: '上传到 TG'
   },
   upload: {
     static: {
@@ -89,5 +90,52 @@ export default {
     maxVideos: '视频处理较慢，一次最多上传 {max} 个文件，已自动选择前 {max} 个',
     clearHistory: '确定要清空历史记录吗？',
     downloadFailed: '打包下载失败，请重试'
+  },
+  telegram: {
+    config: {
+      title: '配置',
+      botToken: 'Bot Token',
+      botTokenPlaceholder: '从 BotFather 获取的 Token',
+      validate: '验证',
+      userId: '用户 ID',
+      userIdPlaceholder: '你的 Telegram 用户 ID',
+      userIdHint: '发送消息给 userinfobot 获取',
+      packName: '贴纸包名称',
+      packNamePlaceholder: '英文字母和数字',
+      packTitle: '贴纸包标题',
+      packTitlePlaceholder: '显示名称',
+      emoji: '默认表情',
+      emojiPlaceholder: '😊'
+    },
+    files: {
+      title: '可上传文件',
+      refresh: '刷新',
+      clearSelection: '取消选择',
+      loading: '加载中...',
+      empty: '暂无可上传的贴纸文件',
+      emptyHint: '请先在静态/视频贴纸页面转换文件',
+      selectAll: '全选'
+    },
+    upload: {
+      selected: '已选择 {n} 个文件',
+      limitWarning: 'Telegram 贴纸包最多 120 个贴纸',
+      button: '上传到 Telegram',
+      uploading: '上传中',
+      viewPack: '查看贴纸包'
+    },
+    help: {
+      title: '❓ 使用帮助',
+      getToken: '如何获取 Bot Token？',
+      step1: '在 Telegram 中搜索 BotFather',
+      step2: '发送 /newbot 创建新机器人',
+      step3: '复制获得的 Token',
+      getUserId: '如何获取用户 ID？',
+      userStep1: '在 Telegram 中搜索 userinfobot',
+      userStep2: '发送任意消息，机器人会回复你的 ID',
+      important: '重要提示',
+      tip1: '上传前请先与你的机器人进行对话（发送 /start）',
+      tip2: '贴纸包名称只能包含英文字母、数字和下划线',
+      tip3: '每个贴纸包最多 120 个静态贴纸或 50 个视频贴纸'
+    }
   }
 }

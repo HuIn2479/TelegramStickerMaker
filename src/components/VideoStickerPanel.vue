@@ -225,7 +225,7 @@ const convertSingle = async (taskId) => {
           id: task.id,
           type: 'video',
           fileName: task.name.replace(/\.[^.]+$/, ''),
-          preview: task.previewUrl,
+          preview: task.result.url, // 使用服务器 URL 而不是 blob URL
           duration: task.duration,
           size: task.file.size,
           result: {
@@ -271,7 +271,7 @@ const convertSingle = async (taskId) => {
         id: task.id,
         type: 'video',
         fileName: task.name.replace(/\.[^.]+$/, ''),
-        preview: task.previewUrl,
+        preview: task.result.url, // 使用服务器 URL 而不是 blob URL
         duration: task.duration,
         size: task.file.size,
         result: {

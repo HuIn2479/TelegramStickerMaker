@@ -89,6 +89,21 @@ export function useWebSocket() {
         // 心跳响应
         break
 
+      case 'telegram_upload_progress':
+      case 'telegram_upload_complete':
+      case 'telegram_upload_error':
+        // 通知 telegram 订阅者
+        if (subscribers.has('telegram')) {
+          subscribers.get('telegram').forEach(callback => {
+            try {
+              callback(data)
+            } catch (error) {
+              console.error('Error in Telegram WebSocket callback:', error)
+            }
+          })
+        }
+        break
+
       default:
         console.warn('Unknown WebSocket message type:', type)
     }

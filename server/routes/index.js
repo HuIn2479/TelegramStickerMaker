@@ -2,6 +2,7 @@ import express from 'express'
 import imageRoutes from './image.js'
 import videoRoutes from './video.js'
 import downloadRoutes from './download.js'
+import telegramRoutes from './telegram.js'
 import config from '../config/index.js'
 
 const router = express.Router()
@@ -30,5 +31,6 @@ router.get('/config', (req, res) => {
 router.use('/', imageRoutes)
 router.use('/', videoRoutes)
 router.use('/', downloadRoutes)
+router.use('/', telegramRoutes)
 
 export default router

@@ -47,6 +47,13 @@
       >
         {{ t('tabs.history') }}
       </button>
+      <button 
+        class="tab" 
+        :class="{ active: activeTab === 'upload' }"
+        @click="activeTab = 'upload'"
+      >
+        {{ t('tabs.upload') }}
+      </button>
     </div>
 
     <div class="panel" v-show="activeTab === 'static'">
@@ -59,6 +66,10 @@
 
     <div class="panel" v-show="activeTab === 'history'">
       <HistoryPanel ref="historyRef" />
+    </div>
+
+    <div class="panel" v-show="activeTab === 'upload'">
+      <TelegramUploadPanel />
     </div>
 
     <PreviewModal />
@@ -77,6 +88,7 @@ import { useI18n } from 'vue-i18n'
 import StaticStickerPanel from './components/StaticStickerPanel.vue'
 import VideoStickerPanel from './components/VideoStickerPanel.vue'
 import HistoryPanel from './components/HistoryPanel.vue'
+import TelegramUploadPanel from './components/TelegramUploadPanel.vue'
 import PreviewModal from './components/PreviewModal.vue'
 import { useWebSocket } from './composables/useWebSocket'
 

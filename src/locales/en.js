@@ -6,7 +6,8 @@ export default {
   tabs: {
     static: 'Static',
     video: 'Video',
-    history: 'History'
+    history: 'History',
+    upload: 'Upload to TG'
   },
   upload: {
     static: {
@@ -89,5 +90,52 @@ export default {
     maxVideos: 'Video processing is slow, maximum {max} files at once, automatically selected first {max}',
     clearHistory: 'Are you sure you want to clear history?',
     downloadFailed: 'Batch download failed, please try again'
+  },
+  telegram: {
+    config: {
+      title: 'Configuration',
+      botToken: 'Bot Token',
+      botTokenPlaceholder: 'Token from BotFather',
+      validate: 'Validate',
+      userId: 'User ID',
+      userIdPlaceholder: 'Your Telegram user ID',
+      userIdHint: 'Send message to userinfobot to get it',
+      packName: 'Pack Name',
+      packNamePlaceholder: 'Letters and numbers only',
+      packTitle: 'Pack Title',
+      packTitlePlaceholder: 'Display name',
+      emoji: 'Default Emoji',
+      emojiPlaceholder: '😊'
+    },
+    files: {
+      title: 'Available Files',
+      refresh: 'Refresh',
+      clearSelection: 'Clear Selection',
+      loading: 'Loading...',
+      empty: 'No sticker files available',
+      emptyHint: 'Convert files in Static/Video panel first',
+      selectAll: 'Select All'
+    },
+    upload: {
+      selected: '{n} files selected',
+      limitWarning: 'Telegram packs limited to 120 stickers',
+      button: 'Upload to Telegram',
+      uploading: 'Uploading',
+      viewPack: 'View Sticker Pack'
+    },
+    help: {
+      title: '❓ Help',
+      getToken: 'How to get Bot Token?',
+      step1: 'Search BotFather in Telegram',
+      step2: 'Send /newbot to create a new bot',
+      step3: 'Copy the token you received',
+      getUserId: 'How to get User ID?',
+      userStep1: 'Search userinfobot in Telegram',
+      userStep2: 'Send any message and the bot will reply with your ID',
+      important: 'Important Notes',
+      tip1: 'Start a chat with your bot before uploading (send /start)',
+      tip2: 'Pack name can only contain letters, numbers and underscores',
+      tip3: 'Each pack can have max 120 static or 50 video stickers'
+    }
   }
 }

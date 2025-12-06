@@ -3,6 +3,18 @@
  */
 
 /**
+ * 获取 API 基础 URL
+ */
+export function getApiBaseUrl() {
+  // 开发环境使用相对路径或指定的 API URL
+  if (import.meta.env.DEV) {
+    return import.meta.env.VITE_API_URL || 'http://localhost:3000'
+  }
+  // 生产环境使用相对路径
+  return ''
+}
+
+/**
  * 检测是否在 GitHub Pages 环境
  */
 export function isGitHubPages() {

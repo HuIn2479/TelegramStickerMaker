@@ -169,7 +169,7 @@ const convertSingle = async (taskId) => {
           id: task.id,
           type: 'image',
           fileName: task.name.replace(/\.[^.]+$/, ''),
-          preview: task.previewUrl,
+          preview: task.result.png.url, // 使用服务器 URL 而不是 blob URL
           width: task.width,
           height: task.height,
           size: task.file.size,
@@ -215,7 +215,7 @@ const convertSingle = async (taskId) => {
         id: task.id,
         type: 'image',
         fileName: task.name.replace(/\.[^.]+$/, ''),
-        preview: task.previewUrl,
+        preview: task.result.png.url, // 使用服务器 URL 而不是 blob URL
         width: task.width,
         height: task.height,
         size: task.file.size,

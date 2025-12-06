@@ -156,6 +156,21 @@ class WebSocketManager {
   }
 
   /**
+   * 广播消息到所有连接的客户端
+   */
+  broadcast(data) {
+    if (!this.wss) return
+
+    const message = typeof data === 'string' ? data : JSON.stringify(data)
+    
+    this.wss.clients.forEach(ws => {
+      if (ws.readyState === 1) { // OPEN
+        ws.send(message)
+      }
+    })
+  }
+
+  /**
    * 广播进度更新到订阅的客户端
    */
   broadcastProgress(taskId, progress) {
