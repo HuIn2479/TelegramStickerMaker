@@ -2,8 +2,8 @@
 
 将图片或视频转换为 Telegram 贴纸格式
 
-[![Vue 3](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vue.js)](https://vuejs.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.4-646CFF?logo=vite)](https://vitejs.dev/)
+[![Vue 3](https://img.shields.io/badge/Vue-3.4-4FC08D?logo=vue.js)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-7.2-646CFF?logo=vite)](https://vitejs.dev/)
 
 ---
 
@@ -13,12 +13,14 @@
 
 - PNG/WEBP/JPG → PNG + WEBP
 - 512×512 以内，保持透明
+- 支持批量处理（最多 20 张）
 - 不支持 GIF 动图（请使用视频贴纸功能）
 
 ### 视频贴纸
 
 - GIF/MP4/WEBM → WEBM VP9
 - 时间截取（≤3 秒），≤256KB
+- 支持批量处理（最多 10 个）
 - 30 FPS，无音轨
 
 ---
@@ -135,7 +137,6 @@ npm run preview
 ├── server.js                 # 服务器入口
 ├── package.json              # 项目配置
 ├── vite.config.js            # Vite 配置
-└── ARCHITECTURE.md           # 架构文档
 ```
 
 ---
@@ -188,13 +189,6 @@ npm run preview
 1. 在 `src/locales/` 创建新的语言文件（如 `ja.js`）
 2. 在 `src/i18n.js` 中导入并添加到 messages
 3. 更新 `App.vue` 中的语言切换器
-
----
-
-## 相关文档
-
-- [架构文档](./ARCHITECTURE.md) - 详细的技术架构说明
-- [API 文档](./ARCHITECTURE.md#api-接口) - 完整的 API 接口文档
 
 ---
 
