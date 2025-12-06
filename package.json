@@ -5,6 +5,10 @@
   "description": "Telegram 贴纸制作工具 - 使用 Vue 3 + Vite 构建",
   "author": "HuIn2479",
   "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "cross-env NODE_ENV=development node server.js",
