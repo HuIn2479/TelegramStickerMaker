@@ -2,25 +2,25 @@
   <div class="card">
     <UploadZone
       icon="video"
-      text="点击上传或拖拽视频（支持批量）"
-      hint="GIF, MP4, WEBM（不支持静态图片）"
+      :text="t('upload.video.text')"
+      :hint="t('upload.video.hint')"
       accept="image/gif,video/mp4,video/webm,video/quicktime,video/x-msvideo"
       @files-selected="handleFilesSelected"
     />
 
     <div v-if="hasTasks" class="batch-container">
       <div class="batch-header">
-        <span class="batch-title">转换队列</span>
+        <span class="batch-title">{{ t('batch.title') }}</span>
         <div class="batch-actions">
-          <button class="btn btn-primary btn-sm" @click="convertAll">全部转换</button>
+          <button class="btn btn-primary btn-sm" @click="convertAll">{{ t('batch.convertAll') }}</button>
           <button 
             v-show="hasDoneTasks" 
             class="btn btn-secondary btn-sm" 
             @click="downloadAll"
           >
-            全部下载
+            {{ t('batch.downloadAll') }}
           </button>
-          <button class="btn btn-secondary btn-sm" @click="clearAll">清空</button>
+          <button class="btn btn-secondary btn-sm" @click="clearAll">{{ t('batch.clear') }}</button>
         </div>
       </div>
       
@@ -41,28 +41,35 @@
     </div>
 
     <div class="requirements">
-      <h4>格式要求</h4>
+      <h4>{{ t('requirements.title') }}</h4>
       <div class="req-list">
-        <span class="req-item">WEBM VP9</span>
-        <span class="req-item">512×512 以内</span>
-        <span class="req-item">≤3 秒</span>
-        <span class="req-item">30 FPS</span>
-        <span class="req-item">≤256 KB</span>
-        <span class="req-item">无音轨</span>
+        <span class="req-item">{{ t('requirements.video.format') }}</span>
+        <span class="req-item">{{ t('requirements.video.size') }}</span>
+        <span class="req-item">{{ t('requirements.video.duration') }}</span>
+        <span class="req-item">{{ t('requirements.video.fps') }}</span>
+        <span class="req-item">{{ t('requirements.video.fileSize') }}</span>
+        <span class="req-item">{{ t('requirements.video.audio') }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onBeforeUnmount } from 'vue'
+import { ref, reactive, computed, onBeforeUnmount, inject } from 'vue'
+import { useI18n } from 'vue-i18n'
 import UploadZone from './UploadZone.vue'
 import BatchItem from './BatchItem.vue'
 import { generateId, downloadFile, saveToHistory } from '@/utils/helpers'
 import { usePreviewModal } from '@/composables/usePreviewModal'
+import { getUploadLimits } from '@/utils/env'
+
+const { t } = useI18n()
 
 const emit = defineEmits(['converted'])
 const tasks = ref([])
+
+// 注入 WebSocket
+const websocket = inject('websocket', null)
 
 // 组件销毁时清理内存
 onBeforeUnmount(() => {
@@ -90,21 +97,23 @@ const handleFilesSelected = (files) => {
   })
   
   if (validFiles.length === 0) {
-    alert('请上传 GIF、MP4 或 WEBM 格式的视频文件（不支持静态图片）')
+    alert(t('alerts.invalidVideoFormat'))
     return
   }
   
   if (validFiles.length < files.length) {
-    alert(`已过滤掉 ${files.length - validFiles.length} 个不支持的文件（静态图片等）`)
+    alert(t('alerts.filesFilteredVideo', { n: files.length - validFiles.length }))
   }
   
-  // 限制最多一次上传 10 个视频文件
-  const MAX_FILES = 10
-  const filesToProcess = validFiles.slice(0, MAX_FILES)
+  // 限制最多一次上传的视频文件数量
+  const limits = getUploadLimits()
+  const MAX_FILES = limits.maxVideoFiles
   
   if (validFiles.length > MAX_FILES) {
-    alert(`视频处理较慢，一次最多上传 ${MAX_FILES} 个文件，已自动选择前 ${MAX_FILES} 个`)
+    alert(t('alerts.maxVideos', { max: MAX_FILES }))
   }
+  
+  const filesToProcess = validFiles.slice(0, MAX_FILES)
   
   filesToProcess.forEach(file => {
     const previewUrl = URL.createObjectURL(file)
@@ -199,6 +208,40 @@ const convertSingle = async (taskId) => {
   if (!task) return
 
   task.status = 'converting'
+  task.progress = { percentage: 0, message: t('status.preparing') }
+
+  // 订阅 WebSocket 进度更新
+  const unsubscribe = websocket?.subscribe(taskId, (data) => {
+    if (data.type === 'progress') {
+      task.progress = data.progress
+    } else if (data.type === 'complete') {
+      task.status = 'done'
+      task.result = data.result?.result || data.result
+      task.progress = { percentage: 100, message: t('status.completed') }
+      
+      // 保存到历史记录
+      if (task.result && task.result.url) {
+        saveToHistory({
+          id: task.id,
+          type: 'video',
+          fileName: task.name.replace(/\.[^.]+$/, ''),
+          preview: task.previewUrl,
+          duration: task.duration,
+          size: task.file.size,
+          result: {
+            webm: task.result.url
+          }
+        })
+      }
+      
+      emit('converted')
+      unsubscribe?.()
+    } else if (data.type === 'error') {
+      task.status = 'error'
+      task.error = data.error
+      unsubscribe?.()
+    }
+  })
 
   try {
     // 服务器处理
@@ -206,6 +249,7 @@ const convertSingle = async (taskId) => {
     formData.append('video', task.file)
     formData.append('startTime', task.startTime)
     formData.append('endTime', task.endTime)
+    formData.append('taskId', taskId)
 
     const response = await fetch('/api/convert-video', {
       method: 'POST',
@@ -215,29 +259,32 @@ const convertSingle = async (taskId) => {
     const data = await response.json()
 
     if (!response.ok) {
-      throw new Error(data.error || '转换失败')
+      throw new Error(data.error || t('status.conversionFailed'))
     }
-
-    task.status = 'done'
-    task.result = data.result
     
-    // 保存到历史记录
-    saveToHistory({
-      id: task.id,
-      type: 'video',
-      fileName: task.name.replace(/\.[^.]+$/, ''),
-      preview: task.previewUrl,
-      duration: task.duration,
-      size: task.file.size,
-      result: {
-        webm: task.result.url
-      }
-    })
-    
-    emit('converted')
+    // 如果没有 WebSocket，使用传统方式
+    if (!websocket) {
+      task.status = 'done'
+      task.result = data.result
+      
+      saveToHistory({
+        id: task.id,
+        type: 'video',
+        fileName: task.name.replace(/\.[^.]+$/, ''),
+        preview: task.previewUrl,
+        duration: task.duration,
+        size: task.file.size,
+        result: {
+          webm: task.result.url
+        }
+      })
+      
+      emit('converted')
+    }
   } catch (error) {
     task.status = 'error'
     task.error = error.message
+    unsubscribe?.()
   }
 }
 
@@ -258,10 +305,50 @@ const downloadResult = ({ id }) => {
   downloadFile(task.result.url, `${baseName}.webm`)
 }
 
-const downloadAll = () => {
-  tasks.value
-    .filter(t => t.status === 'done' && t.result)
-    .forEach(task => downloadResult({ id: task.id }))
+const downloadAll = async () => {
+  const completedTasks = tasks.value.filter(t => t.status === 'done' && t.result && t.result.url)
+  
+  if (completedTasks.length === 0) {
+    return
+  }
+
+  try {
+    // 准备文件列表
+    const files = completedTasks.map(task => {
+      const baseName = task.name.replace(/\.[^.]+$/, '')
+      return {
+        url: task.result.url,
+        name: `${baseName}.webm`
+      }
+    }).filter(file => file.url) // 过滤掉没有 url 的文件
+
+    // 调用后端打包下载 API
+    const response = await fetch('/api/download-batch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ files })
+    })
+
+    if (!response.ok) {
+      throw new Error(t('alerts.downloadFailed'))
+    }
+
+    // 下载 ZIP 文件
+    const blob = await response.blob()
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `stickers-video-${Date.now()}.zip`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    window.URL.revokeObjectURL(url)
+  } catch (error) {
+    console.error('下载失败:', error)
+    alert(t('alerts.downloadFailed'))
+  }
 }
 
 const removeTask = (taskId) => {

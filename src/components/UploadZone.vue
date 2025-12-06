@@ -7,11 +7,10 @@
     @dragleave.prevent="handleDragLeave"
     @drop.prevent="handleDrop"
   >
-    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <path :d="iconPath"/>
-    </svg>
-    <p class="upload-text">{{ text }}</p>
-    <p class="upload-hint">{{ hint }}</p>
+    <div class="upload-content">
+      <p class="upload-text">{{ text }}</p>
+      <p class="upload-hint">{{ hint }}</p>
+    </div>
     <input 
       ref="fileInput"
       type="file" 
@@ -33,7 +32,7 @@ const props = defineProps({
   },
   text: {
     type: String,
-    default: '点击上传或拖拽文件'
+    default: 'Click to upload or drag files'
   },
   hint: {
     type: String,
@@ -85,3 +84,13 @@ const handleFileChange = (e) => {
   }
 }
 </script>
+
+<style scoped>
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  text-align: center;
+}
+</style>

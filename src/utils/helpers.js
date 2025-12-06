@@ -10,8 +10,11 @@ export function formatFileSize(bytes) {
 /**
  * 生成唯一ID
  */
+let idCounter = 0
 export function generateId() {
-  return Date.now() + Math.random().toString(36).substr(2, 9)
+  // 使用时间戳 + 随机数 + 计数器确保唯一性
+  idCounter = (idCounter + 1) % 10000
+  return `${Date.now()}-${idCounter}-${Math.random().toString(36).substr(2, 9)}`
 }
 
 /**
@@ -47,6 +50,7 @@ export function saveToHistory(item) {
   const history = getHistory()
   history.unshift({
     ...item,
+    id: generateId(), // 为历史记录生成新的唯一 ID
     timestamp: Date.now()
   })
   // 只保留最近50条

@@ -1,18 +1,18 @@
 <template>
   <div class="history-panel">
     <div class="history-header">
-      <h3>历史记录</h3>
+      <h3>{{ t('history.title') }}</h3>
       <div class="history-actions">
-        <span class="history-count">{{ history.length }} 条记录</span>
+        <span class="history-count">{{ history.length }} {{ t('history.items') }}</span>
         <button v-if="history.length > 0" @click="handleClearHistory" class="btn-clear">
-          清空
+          {{ t('history.clear') }}
         </button>
       </div>
     </div>
 
     <div v-if="history.length === 0" class="empty-state">
-      <p>暂无历史记录</p>
-      <p class="tip">转换记录会自动保存 24 小时</p>
+      <p>{{ t('history.empty') }}</p>
+      <p class="tip">{{ t('history.tip') }}</p>
     </div>
 
     <div v-else class="history-list">
@@ -48,7 +48,7 @@
             v-if="item.result?.png" 
             @click="handleDownload(item.result.png, item.fileName + '.png')"
             class="btn-download"
-            title="下载 PNG"
+            title="Download PNG"
           >
             PNG
           </button>
@@ -56,7 +56,7 @@
             v-if="item.result?.webp" 
             @click="handleDownload(item.result.webp, item.fileName + '.webp')"
             class="btn-download"
-            title="下载 WEBP"
+            title="Download WEBP"
           >
             WEBP
           </button>
@@ -64,7 +64,7 @@
             v-if="item.result?.webm" 
             @click="handleDownload(item.result.webm, item.fileName + '.webm')"
             class="btn-download"
-            title="下载 WEBM"
+            title="Download WEBM"
           >
             WEBM
           </button>
@@ -76,8 +76,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { getHistory, clearHistory, formatFileSize, downloadFile } from '../utils/helpers'
 import { showPreview } from '../composables/usePreviewModal'
+
+const { t } = useI18n()
 
 const history = ref([])
 
@@ -86,7 +89,7 @@ const loadHistory = () => {
 }
 
 const handleClearHistory = () => {
-  if (confirm('确定要清空历史记录吗？')) {
+  if (confirm(t('alerts.clearHistory'))) {
     clearHistory()
     loadHistory()
   }
@@ -118,9 +121,9 @@ const formatTime = (timestamp) => {
   const minutes = Math.floor(diff / 60000)
   const hours = Math.floor(diff / 3600000)
   
-  if (minutes < 1) return '刚刚'
-  if (minutes < 60) return `${minutes} 分钟前`
-  if (hours < 24) return `${hours} 小时前`
+  if (minutes < 1) return t('history.justNow')
+  if (minutes < 60) return t('history.minutesAgo', { n: minutes })
+  if (hours < 24) return t('history.hoursAgo', { n: hours })
   
   const date = new Date(timestamp)
   return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`
@@ -140,99 +143,106 @@ defineExpose({
 
 <style scoped>
 .history-panel {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
 .history-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .history-header h3 {
   margin: 0;
-  font-size: 18px;
-  color: #333;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -0.2px;
 }
 
 .history-actions {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: var(--spacing-md);
 }
 
 .history-count {
-  font-size: 14px;
-  color: #666;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
 }
 
 .btn-clear {
-  padding: 6px 12px;
-  background: #f44336;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  padding: 6px var(--spacing-md);
+  background: var(--bg-tertiary);
+  color: var(--error);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
   cursor: pointer;
-  font-size: 14px;
-  transition: background 0.3s;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
 }
 
 .btn-clear:hover {
-  background: #d32f2f;
+  background: rgba(239, 83, 80, 0.12);
+  border-color: rgba(239, 83, 80, 0.2);
 }
 
 .empty-state {
   text-align: center;
-  padding: 40px 20px;
-  color: #999;
+  padding: 60px var(--spacing-xl);
+  color: var(--text-secondary);
 }
 
 .empty-state p {
-  margin: 5px 0;
+  margin: var(--spacing-xs) 0;
 }
 
 .empty-state .tip {
-  font-size: 13px;
-  color: #bbb;
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
 }
 
 .history-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-sm);
   max-height: 600px;
   overflow-y: auto;
+  padding: 2px;
 }
 
 .history-item {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 12px;
-  background: #fafafa;
-  border-radius: 6px;
-  transition: background 0.3s;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.2s ease;
 }
 
 .history-item:hover {
-  background: #f0f0f0;
+  background: var(--bg-hover);
+  border-color: var(--border-light);
 }
 
 .history-preview {
   width: 60px;
   height: 60px;
   flex-shrink: 0;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  background: white;
+  background: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="10" height="10" fill="%230e1621"/><rect x="10" y="0" width="10" height="10" fill="%2317212b"/><rect x="0" y="10" width="10" height="10" fill="%2317212b"/><rect x="10" y="10" width="10" height="10" fill="%230e1621"/></svg>');
   cursor: pointer;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-light);
 }
 
 .history-preview img,
@@ -249,43 +259,48 @@ defineExpose({
 
 .history-name {
   font-weight: 500;
-  color: #333;
-  margin-bottom: 5px;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xs);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 0.875rem;
 }
 
 .history-meta {
   display: flex;
-  gap: 10px;
-  font-size: 13px;
-  color: #666;
+  gap: var(--spacing-sm);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
 }
 
 .history-time {
-  color: #999;
+  color: var(--text-tertiary);
 }
 
 .history-downloads {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-xs);
   flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
 .btn-download {
-  padding: 6px 12px;
-  background: #2196F3;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  padding: 6px var(--spacing-md);
+  background: var(--bg-secondary);
+  color: var(--accent);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
   cursor: pointer;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
-  transition: background 0.3s;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .btn-download:hover {
-  background: #1976D2;
+  background: rgba(82, 136, 193, 0.12);
+  border-color: rgba(82, 136, 193, 0.2);
 }
 </style>

@@ -24,12 +24,12 @@
           <!-- 视频时间截取控制 -->
           <div v-if="type === 'video'" class="trim-control">
             <div class="trim-label">
-              <span>截取时间段</span>
+              <span>{{ t('item.trimTime') }}</span>
               <span>{{ trimDuration }}s / {{ task.duration.toFixed(1) }}s</span>
             </div>
             <div class="trim-inputs">
               <div class="trim-input-group">
-                <label>开始</label>
+                <label>{{ t('item.start') }}</label>
                 <input 
                   type="number" 
                   :value="task.startTime.toFixed(1)" 
@@ -40,7 +40,7 @@
                 >
               </div>
               <div class="trim-input-group">
-                <label>结束</label>
+                <label>{{ t('item.end') }}</label>
                 <input 
                   type="number" 
                   :value="task.endTime.toFixed(1)" 
@@ -51,7 +51,7 @@
                 >
               </div>
               <div class="trim-input-group">
-                <label>时长</label>
+                <label>{{ t('item.duration') }}</label>
                 <span class="info-tag" :class="isDurationValid ? 'valid' : 'invalid'">
                   {{ trimDuration }}s
                 </span>
@@ -61,22 +61,28 @@
           
           <div class="batch-item-info">
             <span v-if="task.width && task.height" class="info-tag">{{ task.width }}×{{ task.height }}</span>
-            <span v-else class="info-tag">加载中...</span>
+            <span v-else class="info-tag">{{ t('item.loading') }}</span>
             <span class="info-tag">{{ formatFileSize(task.file.size) }}</span>
           </div>
           
           <div class="batch-item-actions">
-            <button class="btn btn-primary" @click="$emit('convert', task.id)">转换</button>
-            <button v-if="type === 'video'" class="btn btn-secondary" @click="$emit('preview', task.id)">预览截取</button>
-            <button class="btn btn-secondary" @click="$emit('remove', task.id)">移除</button>
+            <button class="btn btn-primary" @click="$emit('convert', task.id)">{{ t('item.convert') }}</button>
+            <button v-if="type === 'video'" class="btn btn-secondary" @click="$emit('preview', task.id)">{{ t('item.preview') }}</button>
+            <button class="btn btn-secondary" @click="$emit('remove', task.id)">{{ t('item.remove') }}</button>
           </div>
         </template>
         
         <!-- 转换中状态 -->
         <template v-if="task.status === 'converting'">
-          <div class="batch-item-info">
-            <span class="loading-spinner"></span>
-            <span style="font-size: 0.8rem; color: var(--text-secondary);">正在转换...</span>
+          <div class="batch-item-progress">
+            <div class="progress-header">
+              <span class="loading-spinner"></span>
+              <span class="progress-message">{{ task.progress?.message || t('status.converting') }}</span>
+              <span class="progress-percentage">{{ task.progress?.percentage || 0 }}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" :style="{ width: (task.progress?.percentage || 0) + '%' }"></div>
+            </div>
           </div>
         </template>
         
@@ -116,13 +122,13 @@
                 
                 <div class="batch-item-actions">
                   <template v-if="type === 'video'">
-                    <button class="btn btn-primary" @click="$emit('download', { id: task.id })">下载</button>
+                    <button class="btn btn-primary" @click="$emit('download', { id: task.id })">{{ t('item.download') }}</button>
                   </template>
                   <template v-else>
                     <button class="btn btn-primary" @click="$emit('download', { id: task.id, format: 'png' })">PNG</button>
                     <button class="btn btn-secondary" @click="$emit('download', { id: task.id, format: 'webp' })">WEBP</button>
                   </template>
-                  <button class="btn btn-secondary" @click="$emit('remove', task.id)">移除</button>
+                  <button class="btn btn-secondary" @click="$emit('remove', task.id)">{{ t('item.remove') }}</button>
                 </div>
               </div>
             </div>
@@ -132,9 +138,9 @@
         <!-- 错误状态 -->
         <template v-if="task.status === 'error'">
           <div class="batch-item-info">
-            <span class="info-tag invalid">{{ task.error || '转换失败' }}</span>
-            <button class="btn btn-secondary btn-sm" @click="$emit('retry', task.id)">重试</button>
-            <button class="btn btn-secondary btn-sm" @click="$emit('remove', task.id)">移除</button>
+            <span class="info-tag invalid">{{ task.error || t('status.conversionFailed') }}</span>
+            <button class="btn btn-secondary btn-sm" @click="$emit('retry', task.id)">{{ t('item.retry') }}</button>
+            <button class="btn btn-secondary btn-sm" @click="$emit('remove', task.id)">{{ t('item.remove') }}</button>
           </div>
         </template>
       </div>
@@ -144,8 +150,11 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { formatFileSize, getStatusText } from '@/utils/helpers'
 import { usePreviewModal } from '@/composables/usePreviewModal'
+
+const { t } = useI18n()
 
 const props = defineProps({
   task: {
@@ -186,14 +195,22 @@ const handleEndTimeChange = (e) => {
 
 const handleMouseEnter = (e) => {
   if (props.type === 'video') {
-    e.target.play()
+    e.target.play().catch(err => {
+      // 忽略播放错误（可能是 blob URL 已失效）
+      console.warn('视频播放失败:', err.message)
+    })
   }
 }
 
 const handleMouseLeave = (e) => {
   if (props.type === 'video') {
-    e.target.pause()
-    e.target.currentTime = 0
+    try {
+      e.target.pause()
+      e.target.currentTime = 0
+    } catch (err) {
+      // 忽略暂停错误
+      console.warn('视频暂停失败:', err.message)
+    }
   }
 }
 

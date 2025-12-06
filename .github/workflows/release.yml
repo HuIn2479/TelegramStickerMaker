@@ -31,8 +31,7 @@ jobs:
           mkdir -p release
           cp -r dist release/
           cp server.js package.json package-lock.json release/
-          cp README.md QUICKSTART.md DOCKER.md release/
-          cp Dockerfile docker-compose.yml .dockerignore release/
+          cp README.md release/
           cd release
           tar -czf ../telegram-sticker-maker-${{ github.ref_name }}.tar.gz *
       

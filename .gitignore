@@ -6,8 +6,10 @@ dist/
 build/
 
 # Upload and output directories
-uploads/
-output/
+uploads/*
+!uploads/.gitkeep
+output/*
+!output/.gitkeep
 
 # Logs
 logs/
@@ -39,7 +41,10 @@ Thumbs.db
 
 # Backup and legacy files
 *.old.*
+*.backup
 *.backup.*
+*.bak
 legacy/
 *-old.*
 *-new.*
+server.js.backup
