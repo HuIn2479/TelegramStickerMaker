@@ -93,18 +93,18 @@ export default {
   },
   telegram: {
     config: {
-      title: '配置',
-      botToken: 'Bot Token',
-      botTokenPlaceholder: '从 BotFather 获取的 Token',
+      title: 'Telegram 配置',
+      botToken: '机器人令牌',
+      botTokenPlaceholder: "从 BotFather 获取",
       validate: '验证',
       userId: '用户 ID',
       userIdPlaceholder: '你的 Telegram 用户 ID',
-      userIdHint: '发送消息给 userinfobot 获取',
-      packName: '贴纸包名称',
-      packNamePlaceholder: '英文字母和数字',
-      packTitle: '贴纸包标题',
-      packTitlePlaceholder: '显示名称',
-      emoji: '默认表情',
+      userIdHint: "向 userinfobot 发送任意消息获取",
+      packName: '包名称',
+      packNamePlaceholder: '英文、数字、下划线',
+      packTitle: '包标题',
+      packTitlePlaceholder: '贴纸包显示名称',
+      emoji: '表情符号',
       emojiPlaceholder: '😊'
     },
     files: {

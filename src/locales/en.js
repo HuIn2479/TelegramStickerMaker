@@ -93,18 +93,18 @@ export default {
   },
   telegram: {
     config: {
-      title: 'Configuration',
-      botToken: 'Bot Token',
-      botTokenPlaceholder: 'Token from BotFather',
-      validate: 'Validate',
+      title: 'Telegram Config',
+      botToken: 'Token',
+      botTokenPlaceholder: "From BotFather",
+      validate: 'Verify',
       userId: 'User ID',
       userIdPlaceholder: 'Your Telegram user ID',
-      userIdHint: 'Send message to userinfobot to get it',
-      packName: 'Pack Name',
-      packNamePlaceholder: 'Letters and numbers only',
-      packTitle: 'Pack Title',
-      packTitlePlaceholder: 'Display name',
-      emoji: 'Default Emoji',
+      userIdHint: "Send any message to userinfobot to get it",
+      packName: 'Name',
+      packNamePlaceholder: 'Letters, numbers, underscore',
+      packTitle: 'Title',
+      packTitlePlaceholder: 'Display name for pack',
+      emoji: 'Emoji',
       emojiPlaceholder: '😊'
     },
     files: {

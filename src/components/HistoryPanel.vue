@@ -145,7 +145,7 @@ defineExpose({
 .history-panel {
   background: transparent;
   border-radius: 0;
-  padding: 0;
+  padding: var(--weui-cell-padding-h);
   box-shadow: none;
 }
 
@@ -153,67 +153,65 @@ defineExpose({
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 12px;
   padding-bottom: 0;
   border-bottom: none;
 }
 
 .history-header h3 {
   margin: 0;
-  font-size: 0.875rem;
-  color: var(--text-primary);
-  font-weight: 600;
-  letter-spacing: -0.2px;
+  font-size: var(--weui-font-size-md);
+  color: var(--weui-fg-0);
+  font-weight: 500;
 }
 
 .history-actions {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: 12px;
 }
 
 .history-count {
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
+  font-size: var(--weui-font-size-sm);
+  color: var(--weui-fg-1);
 }
 
 .btn-clear {
-  padding: 6px var(--spacing-md);
-  background: var(--bg-tertiary);
-  color: var(--error);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-full);
+  padding: 4px 10px;
+  background: transparent;
+  color: var(--weui-red);
+  border: 1px solid var(--weui-red);
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 0.8125rem;
+  font-size: var(--weui-font-size-sm);
   font-weight: 500;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .btn-clear:hover {
-  background: rgba(239, 83, 80, 0.12);
-  border-color: rgba(239, 83, 80, 0.2);
+  background: rgba(250, 81, 81, 0.1);
 }
 
 .empty-state {
   text-align: center;
-  padding: 60px var(--spacing-xl);
-  color: var(--text-secondary);
+  padding: 40px 20px;
+  color: var(--weui-fg-1);
 }
 
 .empty-state p {
-  margin: var(--spacing-xs) 0;
+  margin: 6px 0;
 }
 
 .empty-state .tip {
-  font-size: 0.8125rem;
-  color: var(--text-tertiary);
+  font-size: var(--weui-font-size-sm);
+  color: var(--weui-fg-2);
 }
 
 .history-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  max-height: 600px;
+  gap: 8px;
+  max-height: 500px;
   overflow-y: auto;
   padding: 2px;
 }
@@ -221,28 +219,27 @@ defineExpose({
 .history-item {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  background: var(--bg-tertiary);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
+  gap: 12px;
+  padding: var(--weui-cell-padding-v) var(--weui-cell-padding-h);
+  background: var(--weui-bg-2);
+  border-radius: var(--weui-radius-md);
+  border: 1px solid var(--weui-fg-divider);
   transition: all 0.2s ease;
 }
 
 .history-item:hover {
-  background: var(--bg-hover);
-  border-color: var(--border-light);
+  background: var(--weui-bg-3);
 }
 
 .history-preview {
-  width: 60px;
-  height: 60px;
+  width: 56px;
+  height: 56px;
   flex-shrink: 0;
-  border-radius: var(--radius-sm);
+  border-radius: var(--weui-radius-md);
   overflow: hidden;
-  background: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="10" height="10" fill="%230e1621"/><rect x="10" y="0" width="10" height="10" fill="%2317212b"/><rect x="0" y="10" width="10" height="10" fill="%2317212b"/><rect x="10" y="10" width="10" height="10" fill="%230e1621"/></svg>');
+  background: var(--weui-bg-3);
   cursor: pointer;
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--weui-fg-divider);
 }
 
 .history-preview img,
@@ -259,48 +256,48 @@ defineExpose({
 
 .history-name {
   font-weight: 500;
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-xs);
+  color: var(--weui-fg-0);
+  margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 0.875rem;
+  font-size: var(--weui-font-size-md);
 }
 
 .history-meta {
   display: flex;
-  gap: var(--spacing-sm);
-  font-size: 0.75rem;
-  color: var(--text-secondary);
+  gap: 8px;
+  font-size: var(--weui-font-size-xs);
+  color: var(--weui-fg-1);
   flex-wrap: wrap;
 }
 
 .history-time {
-  color: var(--text-tertiary);
+  color: var(--weui-fg-2);
 }
 
 .history-downloads {
   display: flex;
-  gap: var(--spacing-xs);
+  gap: 6px;
   flex-shrink: 0;
   flex-wrap: wrap;
 }
 
 .btn-download {
-  padding: 6px var(--spacing-md);
-  background: var(--bg-secondary);
-  color: var(--accent);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-full);
+  padding: 4px 10px;
+  background: var(--weui-bg-3);
+  color: var(--weui-brand-color);
+  border: 1px solid var(--weui-fg-divider);
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: var(--weui-font-size-xs);
   font-weight: 500;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .btn-download:hover {
-  background: rgba(82, 136, 193, 0.12);
-  border-color: rgba(82, 136, 193, 0.2);
+  background: rgba(7, 193, 96, 0.1);
+  border-color: var(--weui-brand-color);
 }
 </style>

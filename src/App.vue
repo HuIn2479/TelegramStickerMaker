@@ -1,84 +1,89 @@
 <template>
-  <div class="container">
-    <header>
-      <div class="header-content">
-        <div>
-          <h1>{{ t('header.title') }}</h1>
-          <p class="subtitle">{{ t('header.subtitle') }}</p>
-        </div>
-        <div class="language-switcher">
-          <button 
-            class="lang-btn" 
-            :class="{ active: locale === 'zh' }"
-            @click="changeLanguage('zh')"
-          >
-            中文
-          </button>
-          <button 
-            class="lang-btn" 
-            :class="{ active: locale === 'en' }"
-            @click="changeLanguage('en')"
-          >
-            EN
-          </button>
+  <div class="weui-page">
+    <div class="container">
+      <!-- WeUI 导航栏 -->
+      <div class="weui-navigation-bar">
+        <div class="weui-navigation-bar__inner">
+          <div>
+            <div class="weui-navigation-bar__title">{{ t('header.title') }}</div>
+            <div class="weui-navigation-bar__subtitle">{{ t('header.subtitle') }}</div>
+          </div>
+          <div class="language-switcher">
+            <button 
+              class="lang-btn" 
+              :class="{ active: locale === 'zh' }"
+              @click="changeLanguage('zh')"
+            >
+              中文
+            </button>
+            <button 
+              class="lang-btn" 
+              :class="{ active: locale === 'en' }"
+              @click="changeLanguage('en')"
+            >
+              EN
+            </button>
+          </div>
         </div>
       </div>
-    </header>
 
-    <div class="tabs">
-      <button 
-        class="tab" 
-        :class="{ active: activeTab === 'static' }"
-        @click="activeTab = 'static'"
-      >
-        {{ t('tabs.static') }}
-      </button>
-      <button 
-        class="tab" 
-        :class="{ active: activeTab === 'video' }"
-        @click="activeTab = 'video'"
-      >
-        {{ t('tabs.video') }}
-      </button>
-      <button 
-        class="tab" 
-        :class="{ active: activeTab === 'history' }"
-        @click="activeTab = 'history'"
-      >
-        {{ t('tabs.history') }}
-      </button>
-      <button 
-        class="tab" 
-        :class="{ active: activeTab === 'upload' }"
-        @click="activeTab = 'upload'"
-      >
-        {{ t('tabs.upload') }}
-      </button>
+      <!-- WeUI Tabs -->
+      <div class="weui-tabs">
+        <button 
+          class="weui-tab" 
+          :class="{ active: activeTab === 'static' }"
+          @click="activeTab = 'static'"
+        >
+          {{ t('tabs.static') }}
+        </button>
+        <button 
+          class="weui-tab" 
+          :class="{ active: activeTab === 'video' }"
+          @click="activeTab = 'video'"
+        >
+          {{ t('tabs.video') }}
+        </button>
+        <button 
+          class="weui-tab" 
+          :class="{ active: activeTab === 'history' }"
+          @click="activeTab = 'history'"
+        >
+          {{ t('tabs.history') }}
+        </button>
+        <button 
+          class="weui-tab" 
+          :class="{ active: activeTab === 'upload' }"
+          @click="activeTab = 'upload'"
+        >
+          {{ t('tabs.upload') }}
+        </button>
+      </div>
+
+      <!-- 内容面板 -->
+      <div class="weui-panel" v-show="activeTab === 'static'">
+        <StaticStickerPanel @converted="handleConverted" />
+      </div>
+
+      <div class="weui-panel" v-show="activeTab === 'video'">
+        <VideoStickerPanel @converted="handleConverted" />
+      </div>
+
+      <div class="weui-panel" v-show="activeTab === 'history'">
+        <HistoryPanel ref="historyRef" />
+      </div>
+
+      <div class="weui-panel" v-show="activeTab === 'upload'">
+        <TelegramUploadPanel />
+      </div>
+
+      <PreviewModal />
+
+      <footer>
+        <p>
+          {{ t('footer.text') }} <a href="https://core.telegram.org/stickers" target="_blank">{{ t('footer.link') }}</a>
+        </p>
+      </footer>
     </div>
-
-    <div class="panel" v-show="activeTab === 'static'">
-      <StaticStickerPanel @converted="handleConverted" />
-    </div>
-
-    <div class="panel" v-show="activeTab === 'video'">
-      <VideoStickerPanel @converted="handleConverted" />
-    </div>
-
-    <div class="panel" v-show="activeTab === 'history'">
-      <HistoryPanel ref="historyRef" />
-    </div>
-
-    <div class="panel" v-show="activeTab === 'upload'">
-      <TelegramUploadPanel />
-    </div>
-
-    <PreviewModal />
-
-    <footer>
-      <p>
-        {{ t('footer.text') }} <a href="https://core.telegram.org/stickers" target="_blank">{{ t('footer.link') }}</a>
-      </p>
-    </footer>
   </div>
 </template>
 
@@ -124,47 +129,5 @@ const handleConverted = () => {
 </script>
 
 <style scoped>
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--spacing-lg);
-}
-
-.language-switcher {
-  display: flex;
-  gap: var(--spacing-xs);
-  background: var(--bg-secondary);
-  padding: var(--spacing-xs);
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border-subtle);
-}
-
-.lang-btn {
-  padding: 4px var(--spacing-md);
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  cursor: pointer;
-  border-radius: var(--radius-full);
-  transition: all 0.15s ease;
-}
-
-.lang-btn:hover {
-  color: var(--text-primary);
-}
-
-.lang-btn.active {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-}
-
-@media (max-width: 640px) {
-  .header-content {
-    flex-direction: column;
-    gap: var(--spacing-md);
-  }
-}
+/* WeUI 导航栏和语言切换样式已在 main.css 中定义 */
 </style>
