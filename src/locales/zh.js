@@ -21,6 +21,7 @@ export default {
   },
   batch: {
     title: '转换队列',
+    items: '个文件',
     convertAll: '全部转换',
     downloadAllPNG: '全部下载 PNG',
     downloadAllWEBP: '全部下载 WEBP',

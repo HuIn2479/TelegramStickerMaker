@@ -1,27 +1,43 @@
 <template>
-  <div class="card">
-    <UploadZone
-      icon="video"
-      :text="t('upload.video.text')"
-      :hint="t('upload.video.hint')"
-      accept="image/gif,video/mp4,video/webm,video/quicktime,video/x-msvideo"
-      @files-selected="handleFilesSelected"
-    />
-
-    <div v-if="hasTasks" class="batch-container">
-      <div class="batch-header">
-        <span class="batch-title">{{ t('batch.title') }}</span>
-        <div class="batch-actions">
-          <button class="btn btn-primary btn-sm" @click="convertAll">{{ t('batch.convertAll') }}</button>
-          <button 
-            v-show="hasDoneTasks" 
-            class="btn btn-secondary btn-sm" 
-            @click="downloadAll"
-          >
-            {{ t('batch.downloadAll') }}
-          </button>
-          <button class="btn btn-secondary btn-sm" @click="clearAll">{{ t('batch.clear') }}</button>
+  <div class="panel-container">
+    <!-- 上传卡片 -->
+    <div class="card upload-card">
+      <div class="card-header">
+        <div class="card-icon video-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
+        <div class="card-title-group">
+          <h3 class="card-title">{{ t('tabs.video') }}</h3>
+          <p class="card-subtitle">GIF / MP4 / WEBM → WEBM VP9</p>
+        </div>
+      </div>
+      <UploadZone
+        icon="video"
+        :text="t('upload.video.text')"
+        :hint="t('upload.video.hint')"
+        accept="image/gif,video/mp4,video/webm,video/quicktime,video/x-msvideo"
+        @files-selected="handleFilesSelected"
+      />
+    </div>
+
+    <!-- 批量处理卡片 -->
+    <div v-if="hasTasks" class="card batch-card">
+      <div class="card-header">
+        <span class="card-title">{{ t('batch.title') }}</span>
+        <span class="task-count">{{ tasks.length }} {{ t('batch.items') }}</span>
+      </div>
+      <div class="batch-actions">
+        <button class="btn btn-primary btn-sm" @click="convertAll">{{ t('batch.convertAll') }}</button>
+        <button 
+          v-show="hasDoneTasks" 
+          class="btn btn-secondary btn-sm" 
+          @click="downloadAll"
+        >
+          {{ t('batch.downloadAll') }}
+        </button>
+        <button class="btn btn-secondary btn-sm" @click="clearAll">{{ t('batch.clear') }}</button>
       </div>
       
       <div class="batch-list">
@@ -40,15 +56,36 @@
       </div>
     </div>
 
-    <div class="requirements">
-      <h4>{{ t('requirements.title') }}</h4>
-      <div class="req-list">
-        <span class="req-item">{{ t('requirements.video.format') }}</span>
-        <span class="req-item">{{ t('requirements.video.size') }}</span>
-        <span class="req-item">{{ t('requirements.video.duration') }}</span>
-        <span class="req-item">{{ t('requirements.video.fps') }}</span>
-        <span class="req-item">{{ t('requirements.video.fileSize') }}</span>
-        <span class="req-item">{{ t('requirements.video.audio') }}</span>
+    <!-- 规格说明卡片 -->
+    <div class="card requirements-card">
+      <div class="card-header">
+        <span class="card-title">{{ t('requirements.title') }}</span>
+      </div>
+      <div class="req-grid">
+        <div class="req-item">
+          <span class="req-icon">📄</span>
+          <span class="req-text">{{ t('requirements.video.format') }}</span>
+        </div>
+        <div class="req-item">
+          <span class="req-icon">📐</span>
+          <span class="req-text">{{ t('requirements.video.size') }}</span>
+        </div>
+        <div class="req-item">
+          <span class="req-icon">⏱️</span>
+          <span class="req-text">{{ t('requirements.video.duration') }}</span>
+        </div>
+        <div class="req-item">
+          <span class="req-icon">🎬</span>
+          <span class="req-text">{{ t('requirements.video.fps') }}</span>
+        </div>
+        <div class="req-item">
+          <span class="req-icon">💾</span>
+          <span class="req-text">{{ t('requirements.video.fileSize') }}</span>
+        </div>
+        <div class="req-item">
+          <span class="req-icon">🔇</span>
+          <span class="req-text">{{ t('requirements.video.audio') }}</span>
+        </div>
       </div>
     </div>
   </div>

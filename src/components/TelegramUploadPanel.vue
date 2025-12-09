@@ -1,227 +1,239 @@
 <template>
-  <div class="telegram-panel">
-    <!-- 配置区域 -->
-    <div class="weui-cells__group weui-cells__group_form">
-      <div class="weui-cells__title">{{ t('telegram.config.title') }}</div>
-      <div class="weui-cells weui-cells_form">
+  <div class="panel-container">
+    <!-- 配置卡片 -->
+    <div class="card config-card">
+      <div class="card-header">
+        <div class="card-icon telegram-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .37z"/>
+          </svg>
+        </div>
+        <div class="card-title-group">
+          <h3 class="card-title">{{ t('telegram.config.title') }}</h3>
+          <p class="card-subtitle">配置 Bot 和贴纸包信息</p>
+        </div>
+      </div>
+
+      <div class="config-form">
         <!-- Bot Token -->
-        <div class="weui-cell">
-          <div class="weui-cell__hd"><label class="weui-label">{{ t('telegram.config.botToken') }}</label></div>
-          <div class="weui-cell__bd">
-            <input v-model="botToken" class="weui-input" :type="showToken ? 'text' : 'password'" :placeholder="t('telegram.config.botTokenPlaceholder')" @blur="saveConfig" />
+        <div class="form-item">
+          <label class="form-label">{{ t('telegram.config.botToken') }}</label>
+          <div class="form-input-group">
+            <input v-model="botToken" class="form-input" :type="showToken ? 'text' : 'password'" :placeholder="t('telegram.config.botTokenPlaceholder')" @blur="saveConfig" />
+            <div class="token-actions">
+              <button class="token-icon-btn" @click="showToken = !showToken" :title="showToken ? '隐藏' : '显示'">
+                <svg v-if="showToken" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                <svg v-else viewBox="0 0 24 24" fill="currentColor"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
+              </button>
+              <button 
+                class="token-validate-btn" 
+                :class="{ 'token-validate-btn_disabled': !botToken || validating }"
+                @click="validateToken" 
+                :disabled="!botToken || validating"
+              >
+                <svg v-if="validating" class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="12"/></svg>
+                <span>{{ validating ? '验证中' : t('telegram.config.validate') }}</span>
+              </button>
+            </div>
           </div>
-          <div class="weui-cell__ft token-actions">
-            <button class="token-icon-btn" @click="showToken = !showToken" :title="showToken ? '隐藏' : '显示'">
-              <svg v-if="showToken" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              <svg v-else viewBox="0 0 24 24" fill="currentColor"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
-            </button>
-            <button 
-              class="token-validate-btn" 
-              :class="{ 'token-validate-btn_disabled': !botToken || validating }"
-              @click="validateToken" 
-              :disabled="!botToken || validating"
-            >
-              <svg v-if="validating" class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="12"/></svg>
-              <span>{{ validating ? '验证中' : t('telegram.config.validate') }}</span>
-            </button>
+          <!-- Token 验证结果 -->
+          <div v-if="botInfo" class="token-result token-result_success">
+            <svg class="token-result__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <span class="token-result__text">已连接 <strong>@{{ botInfo.username }}</strong></span>
           </div>
-        </div>
-        <!-- Token 验证结果 -->
-        <div v-if="botInfo" class="token-result token-result_success">
-          <svg class="token-result__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-          <span class="token-result__text">已连接 <strong>@{{ botInfo.username }}</strong></span>
-        </div>
-        <div v-if="tokenError" class="token-result token-result_error">
-          <svg class="token-result__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-          <span class="token-result__text">{{ tokenError }}</span>
+          <div v-if="tokenError" class="token-result token-result_error">
+            <svg class="token-result__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            <span class="token-result__text">{{ tokenError }}</span>
+          </div>
         </div>
 
         <!-- 用户 ID -->
-        <div class="weui-cell">
-          <div class="weui-cell__hd"><label class="weui-label">{{ t('telegram.config.userId') }}</label></div>
-          <div class="weui-cell__bd">
-            <input v-model="userId" class="weui-input" type="text" :placeholder="t('telegram.config.userIdPlaceholder')" @blur="saveConfig" />
-          </div>
+        <div class="form-item">
+          <label class="form-label">{{ t('telegram.config.userId') }}</label>
+          <input v-model="userId" class="form-input" type="text" :placeholder="t('telegram.config.userIdPlaceholder')" @blur="saveConfig" />
         </div>
 
         <!-- 贴纸包名称 -->
-        <div class="weui-cell">
-          <div class="weui-cell__hd"><label class="weui-label">{{ t('telegram.config.packName') }}</label></div>
-          <div class="weui-cell__bd">
-            <input v-model="packName" class="weui-input" type="text" :placeholder="t('telegram.config.packNamePlaceholder')" @blur="saveConfig" />
-          </div>
+        <div class="form-item">
+          <label class="form-label">{{ t('telegram.config.packName') }}</label>
+          <input v-model="packName" class="form-input" type="text" :placeholder="t('telegram.config.packNamePlaceholder')" @blur="saveConfig" />
         </div>
 
         <!-- 贴纸包标题 -->
-        <div class="weui-cell">
-          <div class="weui-cell__hd"><label class="weui-label">{{ t('telegram.config.packTitle') }}</label></div>
-          <div class="weui-cell__bd">
-            <input v-model="packTitle" class="weui-input" type="text" :placeholder="t('telegram.config.packTitlePlaceholder')" @blur="saveConfig" />
-          </div>
+        <div class="form-item">
+          <label class="form-label">{{ t('telegram.config.packTitle') }}</label>
+          <input v-model="packTitle" class="form-input" type="text" :placeholder="t('telegram.config.packTitlePlaceholder')" @blur="saveConfig" />
         </div>
 
         <!-- 默认表情 -->
-        <div class="weui-cell weui-cell_access emoji-cell" @click="showEmojiPicker = !showEmojiPicker">
-          <div class="weui-cell__hd"><label class="weui-label">{{ t('telegram.config.emoji') }}</label></div>
-          <div class="weui-cell__bd">
-            <div class="emoji-preview">
-              <span class="emoji-preview__icon">{{ defaultEmoji }}</span>
-              <span class="emoji-preview__hint">点击更换</span>
-            </div>
-          </div>
+        <div class="form-item">
+          <label class="form-label">{{ t('telegram.config.emoji') }}</label>
+          <div class="emoji-selector" @click="showEmojiPicker = !showEmojiPicker">
+            <span class="emoji-preview__icon">{{ defaultEmoji }}</span>
+            <span class="emoji-preview__hint">点击更换</span>
             <svg class="emoji-arrow" :class="{ 'emoji-arrow_up': showEmojiPicker }" viewBox="0 0 24 24" fill="currentColor">
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
             </svg>
-
-        </div>
-        <!-- Emoji 选择器 -->
-        <div v-if="showEmojiPicker" class="emoji-picker">
-          <div class="emoji-grid">
-            <button 
-              v-for="emoji in emojiList" 
-              :key="emoji" 
-              class="emoji-item"
-              :class="{ 'emoji-item_selected': defaultEmoji === emoji }"
-              @click="selectEmoji(emoji)"
-            >
-              {{ emoji }}
-            </button>
           </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- 文件选择区域 -->
-    <div class="weui-cells__group">
-      <div class="weui-cells__title">
-        {{ t('telegram.files.title') }}
-        <span class="weui-cells__title_counter" v-if="outputFiles.length > 0">{{ selectedFiles.length }}/{{ outputFiles.length }}</span>
-      </div>
-      <div class="weui-cells">
-        <!-- 操作栏 -->
-        <div class="weui-cell weui-cell_access" v-if="outputFiles.length > 0">
-          <div class="weui-cell__bd">
-            <label class="weui-checkbox-label">
-              <input type="checkbox" class="weui-checkbox" :checked="isAllSelected" @change="toggleSelectAll" />
-              <span>{{ t('telegram.files.selectAll') }}</span>
-            </label>
-          </div>
-          <div class="weui-cell__ft">
-            <button class="weui-btn weui-btn_mini weui-btn_default" @click="loadOutputFiles" :disabled="loadingFiles">刷新</button>
-            <button v-if="selectedFiles.length > 0" class="weui-btn weui-btn_mini weui-btn_warn" @click="clearSelection">清空</button>
-          </div>
-        </div>
-
-        <!-- 加载状态 -->
-        <div v-if="loadingFiles" class="weui-loadmore">
-          <i class="weui-loading"></i>
-          <span class="weui-loadmore__tips">{{ t('telegram.files.loading') }}</span>
-        </div>
-      
-        <!-- 空状态 -->
-        <div v-else-if="outputFiles.length === 0" class="weui-msg__text-area">
-          <p class="weui-msg__desc">{{ t('telegram.files.empty') }}</p>
-          <p class="weui-msg__desc_light">{{ t('telegram.files.emptyHint') }}</p>
-          <button class="weui-btn weui-btn_mini weui-btn_primary" @click="loadOutputFiles" style="margin-top: 12px;">刷新列表</button>
-        </div>
-      
-        <!-- 文件网格 -->
-        <div v-else class="file-grid-container">
-          <div class="file-grid">
-            <div 
-              v-for="file in outputFiles" 
-              :key="file.name"
-              class="file-item"
-              :class="{ selected: isSelected(file.name) }"
-              @click="toggleSelect(file.name)"
-            >
-              <div class="file-preview">
-                <img v-if="file.type === 'static'" :src="`/output/${file.name}`" :alt="file.name" />
-                <video v-else :src="`/output/${file.name}`" muted loop @mouseenter="$event.target.play()" @mouseleave="$event.target.pause()"></video>
-                <span class="file-type-badge">{{ file.type === 'static' ? 'WEBP' : 'WEBM' }}</span>
-                <span class="file-check" v-if="isSelected(file.name)">✓</span>
-              </div>
+          <!-- Emoji 选择器 -->
+          <div v-if="showEmojiPicker" class="emoji-picker">
+            <div class="emoji-grid">
+              <button 
+                v-for="emoji in emojiList" 
+                :key="emoji" 
+                class="emoji-item"
+                :class="{ 'emoji-item_selected': defaultEmoji === emoji }"
+                @click="selectEmoji(emoji)"
+              >
+                {{ emoji }}
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
     
-    <!-- 上传区域 -->
-    <div class="weui-cells__group" v-if="selectedFiles.length > 0 || uploading || uploadResult">
-      <div class="weui-cells__title">上传到 Telegram</div>
-      <div class="weui-cells">
-        <!-- 上传信息 -->
-        <div class="weui-cell" v-if="selectedFiles.length > 0 && !uploading">
-          <div class="weui-cell__bd">
-            <p>{{ t('telegram.upload.selected', { n: selectedFiles.length }) }}</p>
-            <p class="weui-cell__desc weui-cell__desc_warn" v-if="selectedFiles.length > 120">
-              ⚠️ {{ t('telegram.upload.limitWarning') }}
-            </p>
-          </div>
+    <!-- 文件选择卡片 -->
+    <div class="card files-card">
+      <div class="card-header">
+        <div class="card-icon files-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
+        <div class="card-title-group">
+          <h3 class="card-title">{{ t('telegram.files.title') }}</h3>
+          <p class="card-subtitle" v-if="outputFiles.length > 0">已选 {{ selectedFiles.length }}/{{ outputFiles.length }}</p>
+          <p class="card-subtitle" v-else>暂无转换完成的文件</p>
+        </div>
+        <div class="card-actions" v-if="outputFiles.length > 0">
+          <button class="btn btn-secondary btn-sm" @click="loadOutputFiles" :disabled="loadingFiles">刷新</button>
+        </div>
+      </div>
 
-        <!-- 上传进度 -->
-        <div class="weui-cell" v-if="uploading">
-          <div class="weui-cell__bd">
-            <div class="weui-progress">
-              <div class="weui-progress__bar">
-                <div class="weui-progress__inner-bar" :style="{ width: progressPercent + '%' }"></div>
-              </div>
-              <span class="weui-progress__opr">{{ progressPercent }}%</span>
-            </div>
-            <p class="weui-cell__desc">{{ uploadProgress.current }}/{{ uploadProgress.total }} - {{ uploadProgress.fileName }}</p>
-          </div>
-        </div>
-      
-        <!-- 上传结果 -->
-        <div class="weui-cell" v-if="uploadResult && !uploading">
-          <div class="weui-cell__bd">
-            <p class="upload-result-text">
-              <span class="text-success">✓ 成功 {{ uploadResult.success }}</span>
-              <span class="text-warn" v-if="uploadResult.failed > 0"> · 失败 {{ uploadResult.failed }}</span>
-            </p>
-          </div>
-          <div class="weui-cell__ft" v-if="uploadResult.packUrl">
-            <a :href="uploadResult.packUrl" target="_blank" class="weui-btn weui-btn_mini weui-btn_primary">查看贴纸包</a>
-          </div>
-        </div>
+      <!-- 操作栏 -->
+      <div class="files-toolbar" v-if="outputFiles.length > 0">
+        <label class="checkbox-label">
+          <input type="checkbox" class="checkbox" :checked="isAllSelected" @change="toggleSelectAll" />
+          <span>{{ t('telegram.files.selectAll') }}</span>
+        </label>
+        <button v-if="selectedFiles.length > 0" class="btn btn-sm btn-warn" @click="clearSelection">清空选择</button>
+      </div>
 
-        <!-- 上传按钮 -->
-        <div class="weui-btn-area">
-          <button 
-            class="weui-btn weui-btn_primary"
-            :class="{ 'weui-btn_disabled': !canUpload || uploading }"
-            :disabled="!canUpload || uploading"
-            @click="startUpload"
-          >
-            <span v-if="uploading">上传中...</span>
-            <span v-else>{{ t('telegram.upload.button') }}</span>
-          </button>
+      <!-- 加载状态 -->
+      <div v-if="loadingFiles" class="loading-state">
+        <div class="loading-spinner"></div>
+        <span>{{ t('telegram.files.loading') }}</span>
+      </div>
+    
+      <!-- 空状态 -->
+      <div v-else-if="outputFiles.length === 0" class="empty-state">
+        <div class="empty-icon">📁</div>
+        <p>{{ t('telegram.files.empty') }}</p>
+        <p class="tip">{{ t('telegram.files.emptyHint') }}</p>
+        <button class="btn btn-primary btn-sm" @click="loadOutputFiles" style="margin-top: 12px;">刷新列表</button>
+      </div>
+    
+      <!-- 文件网格 -->
+      <div v-else class="file-grid">
+        <div 
+          v-for="file in outputFiles" 
+          :key="file.name"
+          class="file-item"
+          :class="{ selected: isSelected(file.name) }"
+          @click="toggleSelect(file.name)"
+        >
+          <div class="file-preview">
+            <img v-if="file.type === 'static'" :src="`/output/${file.name}`" :alt="file.name" />
+            <video v-else :src="`/output/${file.name}`" muted loop @mouseenter="$event.target.play()" @mouseleave="$event.target.pause()"></video>
+            <span class="file-type-badge">{{ file.type === 'static' ? 'WEBP' : 'WEBM' }}</span>
+            <span class="file-check" v-if="isSelected(file.name)">✓</span>
+          </div>
         </div>
       </div>
     </div>
     
-    <!-- 帮助 -->
-    <div class="weui-cells__group">
-      <div class="weui-cells">
-        <div class="weui-cell weui-cell_access" @click="showHelp = !showHelp">
-          <div class="weui-cell__bd"><p>{{ t('telegram.help.title') }}</p></div>
-          <div class="weui-cell__ft">{{ showHelp ? '收起' : '展开' }}</div>
+    <!-- 上传卡片 -->
+    <div class="card upload-action-card" v-if="selectedFiles.length > 0 || uploading || uploadResult">
+      <div class="card-header">
+        <div class="card-icon upload-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
-        <div v-if="showHelp" class="help-content">
-          <div class="help-section">
-            <h4>{{ t('telegram.help.getToken') }}</h4>
-            <ol><li>{{ t('telegram.help.step1') }}</li><li>{{ t('telegram.help.step2') }}</li><li>{{ t('telegram.help.step3') }}</li></ol>
-          </div>
-          <div class="help-section">
-            <h4>{{ t('telegram.help.getUserId') }}</h4>
-            <ol><li>{{ t('telegram.help.userStep1') }}</li><li>{{ t('telegram.help.userStep2') }}</li></ol>
-          </div>
-          <div class="help-section">
-            <h4>{{ t('telegram.help.important') }}</h4>
-            <ul><li>{{ t('telegram.help.tip1') }}</li><li>{{ t('telegram.help.tip2') }}</li><li>{{ t('telegram.help.tip3') }}</li></ul>
-          </div>
+        <div class="card-title-group">
+          <h3 class="card-title">上传到 Telegram</h3>
+          <p class="card-subtitle" v-if="!uploading && !uploadResult">{{ t('telegram.upload.selected', { n: selectedFiles.length }) }}</p>
+          <p class="card-subtitle" v-else-if="uploading">正在上传...</p>
+          <p class="card-subtitle" v-else>上传完成</p>
+        </div>
+      </div>
+
+      <!-- 上传警告 -->
+      <div class="upload-warning" v-if="selectedFiles.length > 120 && !uploading">
+        <span>⚠️ {{ t('telegram.upload.limitWarning') }}</span>
+      </div>
+
+      <!-- 上传进度 -->
+      <div class="upload-progress" v-if="uploading">
+        <div class="progress-info">
+          <span>{{ uploadProgress.current }}/{{ uploadProgress.total }}</span>
+          <span>{{ uploadProgress.fileName }}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
+        </div>
+        <span class="progress-percent">{{ progressPercent }}%</span>
+      </div>
+    
+      <!-- 上传结果 -->
+      <div class="upload-result-box" v-if="uploadResult && !uploading">
+        <div class="result-stats">
+          <span class="text-success">✓ 成功 {{ uploadResult.success }}</span>
+          <span class="text-warn" v-if="uploadResult.failed > 0"> · 失败 {{ uploadResult.failed }}</span>
+        </div>
+        <a v-if="uploadResult.packUrl" :href="uploadResult.packUrl" target="_blank" class="btn btn-primary btn-sm">查看贴纸包</a>
+      </div>
+
+      <!-- 上传按钮 -->
+      <button 
+        v-if="!uploadResult"
+        class="btn btn-primary btn-block"
+        :class="{ 'btn-disabled': !canUpload || uploading }"
+        :disabled="!canUpload || uploading"
+        @click="startUpload"
+      >
+        <span v-if="uploading">上传中...</span>
+        <span v-else>{{ t('telegram.upload.button') }}</span>
+      </button>
+    </div>
+    
+    <!-- 帮助卡片 -->
+    <div class="card help-card">
+      <div class="card-header clickable" @click="showHelp = !showHelp">
+        <div class="card-icon help-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="card-title-group">
+          <h3 class="card-title">{{ t('telegram.help.title') }}</h3>
+          <p class="card-subtitle">如何获取 Bot Token 和用户 ID</p>
+        </div>
+        <span class="expand-indicator">{{ showHelp ? '收起' : '展开' }}</span>
+      </div>
+      <div v-if="showHelp" class="help-content">
+        <div class="help-section">
+          <h4>{{ t('telegram.help.getToken') }}</h4>
+          <ol><li>{{ t('telegram.help.step1') }}</li><li>{{ t('telegram.help.step2') }}</li><li>{{ t('telegram.help.step3') }}</li></ol>
+        </div>
+        <div class="help-section">
+          <h4>{{ t('telegram.help.getUserId') }}</h4>
+          <ol><li>{{ t('telegram.help.userStep1') }}</li><li>{{ t('telegram.help.userStep2') }}</li></ol>
+        </div>
+        <div class="help-section">
+          <h4>{{ t('telegram.help.important') }}</h4>
+          <ul><li>{{ t('telegram.help.tip1') }}</li><li>{{ t('telegram.help.tip2') }}</li><li>{{ t('telegram.help.tip3') }}</li></ul>
         </div>
       </div>
     </div>
@@ -494,166 +506,89 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.telegram-panel {
+/* ===== 卡片化布局 ===== */
+.config-card,
+.files-card,
+.upload-action-card,
+.help-card {
+  background: var(--weui-bg-2);
+  border-radius: var(--weui-radius-lg);
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.telegram-icon {
+  background: linear-gradient(135deg, rgba(16, 174, 255, 0.15), rgba(16, 174, 255, 0.05));
+  color: var(--weui-blue);
+}
+
+.files-icon {
+  background: linear-gradient(135deg, rgba(7, 193, 96, 0.15), rgba(7, 193, 96, 0.05));
+  color: var(--weui-brand-color);
+}
+
+.upload-icon {
+  background: linear-gradient(135deg, rgba(250, 157, 59, 0.15), rgba(250, 157, 59, 0.05));
+  color: var(--weui-orange);
+}
+
+.help-icon {
+  background: linear-gradient(135deg, rgba(100, 103, 240, 0.15), rgba(100, 103, 240, 0.05));
+  color: var(--weui-purple);
+}
+
+.card-actions {
+  margin-left: auto;
+}
+
+/* ===== 配置表单 ===== */
+.config-form {
   display: flex;
   flex-direction: column;
+  gap: 16px;
 }
 
-/* ===== WeUI 基础组件样式 ===== */
-.weui-cells__group {
-  margin-top: 8px;
-}
-
-.weui-cells__group:first-child {
-  margin-top: 0;
-}
-
-.weui-cells__title {
+.form-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 16px 8px !important;
-  margin: 0 !important;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
   font-size: var(--weui-font-size-sm);
   color: var(--weui-fg-1);
   font-weight: 500;
 }
 
-.weui-cells__title_counter {
-  font-weight: normal;
-  color: var(--weui-brand-color);
-}
-
-.weui-cells {
-  background: var(--weui-bg-2);
-  overflow: hidden;
-  position: relative;
-}
-
-.weui-cells::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--weui-fg-divider);
-  transform: scaleY(0.5);
-}
-
-.weui-cells::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--weui-fg-divider);
-  transform: scaleY(0.5);
-}
-
-.weui-cell {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  position: relative;
-  background: var(--weui-bg-2);
-}
-
-.weui-cell::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 16px;
-  right: 0;
-  height: 1px;
-  background: var(--weui-fg-divider);
-  transform: scaleY(0.5);
-}
-
-.weui-cell:last-child::after {
-  display: none;
-}
-
-.weui-cell_access {
-  cursor: pointer;
-}
-
-.weui-cell_access:active {
-  background: var(--weui-bg-3);
-}
-
-.weui-cell__hd {
-  margin-right: 16px;
-}
-
-.weui-label {
-  display: block;
-  width: 5em;
-  font-size: var(--weui-font-size-base);
-  color: var(--weui-fg-0);
-  word-wrap: break-word;
-  word-break: keep-all;
-  flex-shrink: 0;
-}
-
-.weui-cell__bd {
-  flex: 1;
-  min-width: 0;
-}
-
-.weui-cell__ft {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: 8px;
-  flex-shrink: 0;
-  color: var(--weui-fg-1);
-  font-size: var(--weui-font-size-sm);
-}
-
-.weui-cell__desc {
-  margin-top: 4px;
-  font-size: var(--weui-font-size-sm);
-  color: var(--weui-fg-2);
-}
-
-.weui-cell__desc_warn {
-  color: var(--weui-orange);
-}
-
-.weui-input {
+.form-input {
   width: 100%;
-  border: none;
-  background: transparent;
+  padding: 10px 12px;
+  border: 1px solid var(--weui-fg-divider);
+  border-radius: var(--weui-radius-md);
+  background: var(--weui-bg-3);
   font-size: var(--weui-font-size-base);
   color: var(--weui-fg-0);
-  line-height: 1.4;
+  transition: all 0.2s;
 }
 
-.weui-input::placeholder {
+.form-input::placeholder {
   color: var(--weui-fg-2);
 }
 
-.weui-input:focus {
+.form-input:focus {
   outline: none;
-}
-
-/* ===== 提示信息 ===== */
-.weui-cells__tips {
-  padding: 4px 16px 8px;
-  font-size: var(--weui-font-size-sm);
-  color: var(--weui-fg-2);
+  border-color: var(--weui-brand-color);
   background: var(--weui-bg-2);
-  line-height: 1.4;
 }
 
-.weui-cells__tips_success {
-  color: var(--weui-brand-color);
+.form-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
-.weui-cells__tips_warn {
-  color: var(--weui-red);
+.form-input-group .form-input {
+  flex: 1;
 }
 
 /* ===== Token 操作按钮 ===== */
@@ -661,17 +596,18 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .token-icon-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   color: var(--weui-fg-1);
-  background: transparent;
+  background: var(--weui-bg-3);
   border: none;
   border-radius: var(--weui-radius-md);
   cursor: pointer;
@@ -679,11 +615,7 @@ onUnmounted(() => {
 }
 
 .token-icon-btn:hover {
-  background: var(--weui-bg-3);
-}
-
-.token-icon-btn:active {
-  background: var(--weui-bg-0);
+  background: var(--weui-bg-4);
 }
 
 .token-icon-btn svg {
@@ -695,7 +627,7 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 14px;
+  padding: 8px 16px;
   font-size: var(--weui-font-size-sm);
   font-weight: 500;
   color: var(--weui-white);
@@ -711,10 +643,6 @@ onUnmounted(() => {
   background: var(--weui-brand-color-dark);
 }
 
-.token-validate-btn:active {
-  transform: scale(0.97);
-}
-
 .token-validate-btn svg {
   width: 14px;
   height: 14px;
@@ -724,7 +652,6 @@ onUnmounted(() => {
   background: var(--weui-fg-3) !important;
   color: var(--weui-fg-2) !important;
   cursor: not-allowed;
-  transform: none !important;
 }
 
 /* ===== Token 验证结果 ===== */
@@ -732,11 +659,10 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 16px;
-  margin: 0;
+  padding: 10px 12px;
+  margin-top: 8px;
   font-size: var(--weui-font-size-sm);
-  background: var(--weui-bg-2);
-  border-top: 1px solid var(--weui-fg-divider);
+  border-radius: var(--weui-radius-md);
 }
 
 .token-result__icon {
@@ -748,7 +674,7 @@ onUnmounted(() => {
 }
 
 .token-result_success {
-  background: rgba(7, 193, 96, 0.06);
+  background: rgba(7, 193, 96, 0.1);
 }
 
 .token-result_success .token-result__icon {
@@ -760,12 +686,8 @@ onUnmounted(() => {
   color: var(--weui-brand-color);
 }
 
-.token-result_success .token-result__text strong {
-  font-weight: 600;
-}
-
 .token-result_error {
-  background: rgba(250, 81, 81, 0.06);
+  background: rgba(250, 81, 81, 0.1);
 }
 
 .token-result_error .token-result__icon {
@@ -777,189 +699,28 @@ onUnmounted(() => {
   color: var(--weui-red);
 }
 
-/* 加载动画 */
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.spin {
-  animation: spin 1s linear infinite;
-}
-
-.weui-btn {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 12px 24px;
-  font-size: var(--weui-font-size-md);
-  text-align: center;
-  border: none;
+/* ===== Emoji 选择器 ===== */
+.emoji-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--weui-bg-3);
   border-radius: var(--weui-radius-md);
   cursor: pointer;
-  font-weight: 500;
+  transition: all 0.2s;
 }
 
-.weui-btn_primary {
-  background: var(--weui-brand-color);
-  color: var(--weui-white);
-}
-
-.weui-btn_primary:active {
-  background: var(--weui-brand-color-dark);
-}
-
-.weui-btn_default {
-  background: var(--weui-bg-3);
-  color: var(--weui-fg-0);
-}
-
-.weui-btn_default:active {
-  background: var(--weui-bg-0);
-}
-
-.weui-btn_warn {
-  background: var(--weui-red);
-  color: var(--weui-white);
-}
-
-.weui-btn_warn:active {
-  opacity: 0.8;
-}
-
-.weui-btn_disabled {
-  background: var(--weui-bg-3) !important;
-  color: var(--weui-fg-2) !important;
-  cursor: not-allowed;
-}
-
-.weui-btn_mini {
-  display: inline-block;
-  width: auto;
-  padding: 4px 12px;
-  font-size: var(--weui-font-size-sm);
-}
-
-.weui-btn-area {
-  padding: 8px 16px;
-}
-
-/* ===== 加载和消息 ===== */
-.weui-loadmore {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 24px 16px;
-  color: var(--weui-fg-1);
-  font-size: var(--weui-font-size-sm);
-}
-
-.weui-loading {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--weui-fg-2);
-  border-top-color: var(--weui-brand-color);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.weui-msg__text-area {
-  padding: 32px 16px;
-  text-align: center;
-}
-
-.weui-msg__desc {
-  margin: 0;
-  color: var(--weui-fg-1);
-  font-size: var(--weui-font-size-base);
-}
-
-.weui-msg__desc_light {
-  margin-top: 8px;
-  font-size: var(--weui-font-size-sm);
-  color: var(--weui-fg-2);
-}
-
-/* ===== 复选框 ===== */
-.weui-checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-size: var(--weui-font-size-base);
-  color: var(--weui-fg-0);
-}
-
-.weui-checkbox {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--weui-brand-color);
-}
-
-/* ===== 进度条 ===== */
-.weui-progress {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.weui-progress__bar {
-  flex: 1;
-  height: 4px;
-  background: var(--weui-bg-3);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.weui-progress__inner-bar {
-  height: 100%;
-  background: var(--weui-brand-color);
-  transition: width 0.3s ease;
-  border-radius: 4px;
-}
-
-.weui-progress__opr {
-  font-size: var(--weui-font-size-sm);
-  color: var(--weui-fg-1);
-  min-width: 40px;
-  text-align: right;
-}
-
-/* ===== Emoji 选择器 ===== */
-.emoji-cell {
-  transition: background 0.2s;
-}
-
-.emoji-cell::after {
-  display: none !important;
-}
-
-.emoji-cell:active {
-  background: var(--weui-bg-3);
-}
-
-.emoji-preview {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.emoji-selector:hover {
+  background: var(--weui-bg-4);
 }
 
 .emoji-preview__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  font-size: 26px;
-  background: var(--weui-bg-3);
-  border-radius: var(--weui-radius-md);
+  font-size: 24px;
 }
 
 .emoji-preview__hint {
+  flex: 1;
   font-size: var(--weui-font-size-sm);
   color: var(--weui-fg-2);
 }
@@ -976,7 +737,9 @@ onUnmounted(() => {
 }
 
 .emoji-picker {
+  margin-top: 8px;
   background: var(--weui-bg-3);
+  border-radius: var(--weui-radius-md);
   padding: 12px;
 }
 
@@ -984,11 +747,8 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   gap: 4px;
-  max-height: 240px;
+  max-height: 200px;
   overflow-y: auto;
-  background: var(--weui-bg-2);
-  border-radius: var(--weui-radius-md);
-  padding: 8px;
 }
 
 .emoji-item {
@@ -1005,12 +765,8 @@ onUnmounted(() => {
 }
 
 .emoji-item:hover {
-  background: var(--weui-bg-3);
+  background: var(--weui-bg-2);
   transform: scale(1.2);
-}
-
-.emoji-item:active {
-  transform: scale(0.95);
 }
 
 .emoji-item_selected {
@@ -1018,9 +774,73 @@ onUnmounted(() => {
   box-shadow: inset 0 0 0 2px var(--weui-brand-color);
 }
 
-/* ===== 文件网格 ===== */
-.file-grid-container {
-  padding: 12px 16px;
+/* ===== 文件选择卡片 ===== */
+.files-card .card-header {
+  margin-bottom: 12px;
+}
+
+.files-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--weui-bg-3);
+  border-radius: var(--weui-radius-md);
+  margin-bottom: 12px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: var(--weui-font-size-sm);
+  color: var(--weui-fg-0);
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--weui-brand-color);
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 20px;
+  color: var(--weui-fg-1);
+  font-size: var(--weui-font-size-sm);
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--weui-fg-3);
+  border-top-color: var(--weui-brand-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--weui-fg-1);
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  margin: 6px 0;
+}
+
+.empty-state .tip {
+  font-size: var(--weui-font-size-sm);
+  color: var(--weui-fg-2);
 }
 
 .file-grid {
@@ -1057,7 +877,6 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--weui-bg-3);
 }
 
 .file-preview img,
@@ -1095,9 +914,63 @@ onUnmounted(() => {
   font-weight: bold;
 }
 
-/* ===== 上传结果 ===== */
-.upload-result-text {
-  margin: 0;
+/* ===== 上传卡片 ===== */
+.upload-action-card .card-header {
+  margin-bottom: 16px;
+}
+
+.upload-warning {
+  padding: 10px 12px;
+  background: rgba(250, 157, 59, 0.1);
+  border-radius: var(--weui-radius-md);
+  color: var(--weui-orange);
+  font-size: var(--weui-font-size-sm);
+  margin-bottom: 16px;
+}
+
+.upload-progress {
+  margin-bottom: 16px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--weui-font-size-sm);
+  color: var(--weui-fg-1);
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 6px;
+  background: var(--weui-bg-3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--weui-brand-color);
+  transition: width 0.3s ease;
+}
+
+.progress-percent {
+  font-size: var(--weui-font-size-sm);
+  font-weight: 500;
+  color: var(--weui-brand-color);
+}
+
+.upload-result-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: rgba(7, 193, 96, 0.05);
+  border-radius: var(--weui-radius-md);
+  margin-bottom: 16px;
+}
+
+.result-stats {
   font-size: var(--weui-font-size-base);
 }
 
@@ -1109,9 +982,31 @@ onUnmounted(() => {
   color: var(--weui-red);
 }
 
-/* ===== 帮助内容 ===== */
+/* ===== 帮助卡片 ===== */
+.help-card .card-header {
+  margin-bottom: 0;
+}
+
+.help-card .card-header.clickable {
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: opacity 0.2s;
+}
+
+.help-card .card-header.clickable:hover {
+  opacity: 0.8;
+}
+
+.expand-indicator {
+  margin-left: auto;
+  font-size: var(--weui-font-size-sm);
+  color: var(--weui-fg-2);
+}
+
 .help-content {
-  padding: 0 16px 16px;
+  padding-top: 16px;
+  margin-top: 16px;
   font-size: var(--weui-font-size-sm);
   color: var(--weui-fg-1);
   line-height: 1.8;
@@ -1119,18 +1014,17 @@ onUnmounted(() => {
 }
 
 .help-section {
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 .help-section:first-child {
   margin-top: 0;
-  padding-top: 12px;
 }
 
 .help-section h4 {
   margin: 0 0 8px;
   color: var(--weui-fg-0);
-  font-size: var(--weui-font-size-base);
+  font-size: var(--weui-font-size-md);
   font-weight: 500;
 }
 
@@ -1144,14 +1038,23 @@ onUnmounted(() => {
   margin-bottom: 4px;
 }
 
+/* ===== 动画 ===== */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
 /* ===== 响应式 ===== */
 @media (max-width: 640px) {
   .file-grid {
     grid-template-columns: repeat(3, 1fr);
   }
   
-  .weui-btn-area_inline {
-    flex-direction: column;
+  .emoji-grid {
+    grid-template-columns: repeat(6, 1fr);
   }
 }
 </style>

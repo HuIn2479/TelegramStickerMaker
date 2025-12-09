@@ -1,34 +1,50 @@
 <template>
-  <div class="card">
-    <UploadZone
-      icon="image"
-      :text="t('upload.static.text')"
-      :hint="t('upload.static.hint')"
-      accept="image/png,image/webp,image/jpeg"
-      @files-selected="handleFilesSelected"
-    />
-
-    <div v-if="hasTasks" class="batch-container">
-      <div class="batch-header">
-        <span class="batch-title">{{ t('batch.title') }}</span>
-        <div class="batch-actions">
-          <button class="btn btn-primary btn-sm" @click="convertAll">{{ t('batch.convertAll') }}</button>
-          <button 
-            v-show="hasDoneTasks" 
-            class="btn btn-secondary btn-sm" 
-            @click="downloadAll('png')"
-          >
-            {{ t('batch.downloadAllPNG') }}
-          </button>
-          <button 
-            v-show="hasDoneTasks" 
-            class="btn btn-secondary btn-sm" 
-            @click="downloadAll('webp')"
-          >
-            {{ t('batch.downloadAllWEBP') }}
-          </button>
-          <button class="btn btn-secondary btn-sm" @click="clearAll">{{ t('batch.clear') }}</button>
+  <div class="panel-container">
+    <!-- 上传卡片 -->
+    <div class="card upload-card">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
+        <div class="card-title-group">
+          <h3 class="card-title">{{ t('tabs.static') }}</h3>
+          <p class="card-subtitle">PNG / WEBP / JPG → 512×512</p>
+        </div>
+      </div>
+      <UploadZone
+        icon="image"
+        :text="t('upload.static.text')"
+        :hint="t('upload.static.hint')"
+        accept="image/png,image/webp,image/jpeg"
+        @files-selected="handleFilesSelected"
+      />
+    </div>
+
+    <!-- 批量处理卡片 -->
+    <div v-if="hasTasks" class="card batch-card">
+      <div class="card-header">
+        <span class="card-title">{{ t('batch.title') }}</span>
+        <span class="task-count">{{ tasks.length }} {{ t('batch.items') }}</span>
+      </div>
+      <div class="batch-actions">
+        <button class="btn btn-primary btn-sm" @click="convertAll">{{ t('batch.convertAll') }}</button>
+        <button 
+          v-show="hasDoneTasks" 
+          class="btn btn-secondary btn-sm" 
+          @click="downloadAll('png')"
+        >
+          {{ t('batch.downloadAllPNG') }}
+        </button>
+        <button 
+          v-show="hasDoneTasks" 
+          class="btn btn-secondary btn-sm" 
+          @click="downloadAll('webp')"
+        >
+          {{ t('batch.downloadAllWEBP') }}
+        </button>
+        <button class="btn btn-secondary btn-sm" @click="clearAll">{{ t('batch.clear') }}</button>
       </div>
       
       <div class="batch-list">
@@ -45,12 +61,24 @@
       </div>
     </div>
 
-    <div class="requirements">
-      <h4>{{ t('requirements.title') }}</h4>
-      <div class="req-list">
-        <span class="req-item">{{ t('requirements.static.format') }}</span>
-        <span class="req-item">{{ t('requirements.static.size') }}</span>
-        <span class="req-item">{{ t('requirements.static.background') }}</span>
+    <!-- 规格说明卡片 -->
+    <div class="card requirements-card">
+      <div class="card-header">
+        <span class="card-title">{{ t('requirements.title') }}</span>
+      </div>
+      <div class="req-grid">
+        <div class="req-item">
+          <span class="req-icon">📄</span>
+          <span class="req-text">{{ t('requirements.static.format') }}</span>
+        </div>
+        <div class="req-item">
+          <span class="req-icon">📐</span>
+          <span class="req-text">{{ t('requirements.static.size') }}</span>
+        </div>
+        <div class="req-item">
+          <span class="req-icon">🎨</span>
+          <span class="req-text">{{ t('requirements.static.background') }}</span>
+        </div>
       </div>
     </div>
   </div>

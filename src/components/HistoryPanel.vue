@@ -1,73 +1,82 @@
 <template>
-  <div class="history-panel">
-    <div class="history-header">
-      <h3>{{ t('history.title') }}</h3>
-      <div class="history-actions">
-        <span class="history-count">{{ history.length }} {{ t('history.items') }}</span>
+  <div class="panel-container">
+    <!-- 历史记录卡片 -->
+    <div class="card history-card">
+      <div class="card-header">
+        <div class="card-icon history-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="card-title-group">
+          <h3 class="card-title">{{ t('history.title') }}</h3>
+          <p class="card-subtitle">{{ history.length }} {{ t('history.items') }}</p>
+        </div>
         <button v-if="history.length > 0" @click="handleClearHistory" class="btn-clear">
           {{ t('history.clear') }}
         </button>
       </div>
-    </div>
 
-    <div v-if="history.length === 0" class="empty-state">
-      <p>{{ t('history.empty') }}</p>
-      <p class="tip">{{ t('history.tip') }}</p>
-    </div>
+      <div v-if="history.length === 0" class="empty-state">
+        <div class="empty-icon">📭</div>
+        <p>{{ t('history.empty') }}</p>
+        <p class="tip">{{ t('history.tip') }}</p>
+      </div>
 
-    <div v-else class="history-list">
-      <div 
-        v-for="item in history" 
-        :key="item.id"
-        class="history-item"
-      >
-        <div class="history-preview" @click="handlePreview(item)">
-          <img 
-            v-if="item.type === 'image'" 
-            :src="item.preview || item.result?.png" 
-            :alt="item.fileName"
-          >
-          <video 
-            v-else 
-            :src="item.preview || item.result?.webm" 
-            muted
-          ></video>
-        </div>
-        
-        <div class="history-info">
-          <div class="history-name">{{ item.fileName }}</div>
-          <div class="history-meta">
-            <span v-if="item.width && item.height">{{ item.width }}×{{ item.height }}</span>
-            <span>{{ formatFileSize(item.size || 0) }}</span>
-            <span class="history-time">{{ formatTime(item.timestamp) }}</span>
+      <div v-else class="history-list">
+        <div 
+          v-for="item in history" 
+          :key="item.id"
+          class="history-item"
+        >
+          <div class="history-preview" @click="handlePreview(item)">
+            <img 
+              v-if="item.type === 'image'" 
+              :src="item.preview || item.result?.png" 
+              :alt="item.fileName"
+            >
+            <video 
+              v-else 
+              :src="item.preview || item.result?.webm" 
+              muted
+            ></video>
           </div>
-        </div>
+          
+          <div class="history-info">
+            <div class="history-name">{{ item.fileName }}</div>
+            <div class="history-meta">
+              <span v-if="item.width && item.height">{{ item.width }}×{{ item.height }}</span>
+              <span>{{ formatFileSize(item.size || 0) }}</span>
+              <span class="history-time">{{ formatTime(item.timestamp) }}</span>
+            </div>
+          </div>
 
-        <div class="history-downloads">
-          <button 
-            v-if="item.result?.png" 
-            @click="handleDownload(item.result.png, item.fileName + '.png')"
-            class="btn-download"
-            title="Download PNG"
-          >
-            PNG
-          </button>
-          <button 
-            v-if="item.result?.webp" 
-            @click="handleDownload(item.result.webp, item.fileName + '.webp')"
-            class="btn-download"
-            title="Download WEBP"
-          >
-            WEBP
-          </button>
-          <button 
-            v-if="item.result?.webm" 
-            @click="handleDownload(item.result.webm, item.fileName + '.webm')"
-            class="btn-download"
-            title="Download WEBM"
-          >
-            WEBM
-          </button>
+          <div class="history-downloads">
+            <button 
+              v-if="item.result?.png" 
+              @click="handleDownload(item.result.png, item.fileName + '.png')"
+              class="btn-download"
+              title="Download PNG"
+            >
+              PNG
+            </button>
+            <button 
+              v-if="item.result?.webp" 
+              @click="handleDownload(item.result.webp, item.fileName + '.webp')"
+              class="btn-download"
+              title="Download WEBP"
+            >
+              WEBP
+            </button>
+            <button 
+              v-if="item.result?.webm" 
+              @click="handleDownload(item.result.webm, item.fileName + '.webm')"
+              class="btn-download"
+              title="Download WEBM"
+            >
+              WEBM
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -142,50 +151,51 @@ defineExpose({
 </script>
 
 <style scoped>
-.history-panel {
-  background: transparent;
-  border-radius: 0;
-  padding: var(--weui-cell-padding-h);
-  box-shadow: none;
+/* 历史记录卡片 */
+.history-card {
+  background: var(--weui-bg-2);
+  border-radius: var(--weui-radius-lg);
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.history-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
-.history-header h3 {
-  margin: 0;
-  font-size: var(--weui-font-size-md);
-  color: var(--weui-fg-0);
-  font-weight: 500;
-}
-
-.history-actions {
+.history-card .card-header {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--weui-fg-divider);
 }
 
-.history-count {
-  font-size: var(--weui-font-size-sm);
-  color: var(--weui-fg-1);
+.history-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, rgba(100, 103, 240, 0.15), rgba(100, 103, 240, 0.05));
+  border-radius: var(--weui-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--weui-purple);
+  flex-shrink: 0;
+}
+
+.history-icon svg {
+  width: 22px;
+  height: 22px;
 }
 
 .btn-clear {
-  padding: 4px 10px;
+  padding: 6px 12px;
   background: transparent;
   color: var(--weui-red);
   border: 1px solid var(--weui-red);
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
   font-size: var(--weui-font-size-sm);
   font-weight: 500;
   transition: all 0.2s ease;
+  margin-left: auto;
 }
 
 .btn-clear:hover {
@@ -196,6 +206,11 @@ defineExpose({
   text-align: center;
   padding: 40px 20px;
   color: var(--weui-fg-1);
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
 }
 
 .empty-state p {
@@ -221,14 +236,13 @@ defineExpose({
   align-items: center;
   gap: 12px;
   padding: var(--weui-cell-padding-v) var(--weui-cell-padding-h);
-  background: var(--weui-bg-2);
+  background: var(--weui-bg-3);
   border-radius: var(--weui-radius-md);
-  border: 1px solid var(--weui-fg-divider);
   transition: all 0.2s ease;
 }
 
 .history-item:hover {
-  background: var(--weui-bg-3);
+  background: var(--weui-bg-4);
 }
 
 .history-preview {
@@ -237,7 +251,7 @@ defineExpose({
   flex-shrink: 0;
   border-radius: var(--weui-radius-md);
   overflow: hidden;
-  background: var(--weui-bg-3);
+  background: var(--weui-bg-2);
   cursor: pointer;
   border: 1px solid var(--weui-fg-divider);
 }
@@ -285,7 +299,7 @@ defineExpose({
 
 .btn-download {
   padding: 4px 10px;
-  background: var(--weui-bg-3);
+  background: var(--weui-bg-2);
   color: var(--weui-brand-color);
   border: 1px solid var(--weui-fg-divider);
   border-radius: 12px;

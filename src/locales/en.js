@@ -21,6 +21,7 @@ export default {
   },
   batch: {
     title: 'Conversion Queue',
+    items: 'files',
     convertAll: 'Convert All',
     downloadAllPNG: 'Download All PNG',
     downloadAllWEBP: 'Download All WEBP',
