@@ -125,7 +125,7 @@ export default {
       viewPack: 'View Sticker Pack'
     },
     help: {
-      title: '❓ Help',
+      title: 'Help',
       getToken: 'How to get Bot Token?',
       step1: 'Search BotFather in Telegram',
       step2: 'Send /newbot to create a new bot',

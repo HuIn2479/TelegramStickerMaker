@@ -125,7 +125,7 @@ export default {
       viewPack: '查看贴纸包'
     },
     help: {
-      title: '❓ 使用帮助',
+      title: '使用帮助',
       getToken: '如何获取 Bot Token？',
       step1: '在 Telegram 中搜索 BotFather',
       step2: '发送 /newbot 创建新机器人',
