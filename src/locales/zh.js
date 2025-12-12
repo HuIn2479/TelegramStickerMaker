@@ -96,11 +96,11 @@ export default {
     config: {
       title: 'Telegram 配置',
       botToken: '机器人令牌',
-      botTokenPlaceholder: "从 BotFather 获取",
+      botTokenPlaceholder: '从 BotFather 获取',
       validate: '验证',
       userId: '用户 ID',
       userIdPlaceholder: '你的 Telegram 用户 ID',
-      userIdHint: "向 userinfobot 发送任意消息获取",
+      userIdHint: '向 userinfobot 发送任意消息获取',
       packName: '包名称',
       packNamePlaceholder: '英文、数字、下划线',
       packTitle: '包标题',

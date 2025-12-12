@@ -18,13 +18,7 @@ router.post('/convert-video', upload.single('video'), handleUploadError, async (
     const endTime = parseFloat(req.body.endTime) || 3
     const taskId = req.body.taskId || null
 
-    const result = await videoService.convertToSticker(
-      req.file.path,
-      req.file.originalname,
-      startTime,
-      endTime,
-      taskId
-    )
+    const result = await videoService.convertToSticker(req.file.path, req.file.originalname, startTime, endTime, taskId)
 
     res.json({
       success: true,

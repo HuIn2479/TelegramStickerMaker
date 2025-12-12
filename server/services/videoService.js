@@ -21,7 +21,7 @@ export class VideoService {
           reject(err)
           return
         }
-        
+
         const videoStream = metadata.streams.find(s => s.codec_type === 'video')
         resolve({
           width: videoStream?.width || 0,
@@ -54,7 +54,7 @@ export class VideoService {
           `-crf ${crf}`
         ])
         .output(outputPath)
-        .on('progress', (progress) => {
+        .on('progress', progress => {
           if (onProgress && progress.percent) {
             onProgress(progress.percent)
           }
@@ -78,33 +78,33 @@ export class VideoService {
 
     try {
       tracker?.update(5, '读取视频信息...')
-      
+
       // 获取输入视频信息
       const inputInfo = await this.getVideoInfo(inputPath)
-      
+
       tracker?.update(10, '计算缩放参数...')
-      
+
       // 计算缩放参数
       const scale = inputInfo.width >= inputInfo.height ? '512:-2' : '-2:512'
 
       tracker?.update(15, '开始转换视频...')
-      
+
       // 转换视频（带进度回调）
-      await this.convertToWebm(inputPath, outputPath, scale, startTime, duration, false, (percent) => {
+      await this.convertToWebm(inputPath, outputPath, scale, startTime, duration, false, percent => {
         const progress = 15 + Math.round(percent * 0.6) // 15-75%
         tracker?.update(progress, `转换中... ${Math.round(percent)}%`)
       })
 
       tracker?.update(80, '检查文件大小...')
-      
+
       // 检查文件大小
       let outputStats = fs.statSync(outputPath)
-      
+
       // 如果超过限制，使用更高压缩
       if (outputStats.size > config.sticker.maxVideoFileSize) {
         logger.debug(`Video size ${outputStats.size} exceeds limit, applying high compression`)
         tracker?.update(85, '文件过大，重新压缩...')
-        await this.convertToWebm(inputPath, outputPath, scale, startTime, duration, true, (percent) => {
+        await this.convertToWebm(inputPath, outputPath, scale, startTime, duration, true, percent => {
           const progress = 85 + Math.round(percent * 0.1) // 85-95%
           tracker?.update(progress, `高压缩中... ${Math.round(percent)}%`)
         })
@@ -112,12 +112,12 @@ export class VideoService {
       }
 
       tracker?.update(95, '获取输出信息...')
-      
+
       // 获取输出视频信息
       const outputInfo = await this.getVideoInfo(outputPath)
 
       tracker?.update(100, '完成转换')
-      
+
       // 删除原始文件
       safeDeleteFile(inputPath)
 
@@ -138,7 +138,7 @@ export class VideoService {
           sizeValid: outputStats.size <= config.sticker.maxVideoFileSize
         }
       }
-      
+
       tracker?.complete(result)
       return result
     } catch (error) {

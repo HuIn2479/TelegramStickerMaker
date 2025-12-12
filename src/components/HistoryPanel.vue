@@ -5,14 +5,14 @@
       <div class="card-header">
         <div class="card-icon history-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </div>
         <div class="card-title-group">
           <h3 class="card-title">{{ t('history.title') }}</h3>
           <p class="card-subtitle">{{ history.length }} {{ t('history.items') }}</p>
         </div>
-        <button v-if="history.length > 0" @click="handleClearHistory" class="btn-clear">
+        <button v-if="history.length > 0" class="btn-clear" @click="handleClearHistory">
           {{ t('history.clear') }}
         </button>
       </div>
@@ -24,24 +24,12 @@
       </div>
 
       <div v-else class="history-list">
-        <div 
-          v-for="item in history" 
-          :key="item.id"
-          class="history-item"
-        >
+        <div v-for="item in history" :key="item.id" class="history-item">
           <div class="history-preview" @click="handlePreview(item)">
-            <img 
-              v-if="item.type === 'image'" 
-              :src="item.preview || item.result?.png" 
-              :alt="item.fileName"
-            >
-            <video 
-              v-else 
-              :src="item.preview || item.result?.webm" 
-              muted
-            ></video>
+            <img v-if="item.type === 'image'" :src="item.preview || item.result?.png" :alt="item.fileName" />
+            <video v-else :src="item.preview || item.result?.webm" muted></video>
           </div>
-          
+
           <div class="history-info">
             <div class="history-name">{{ item.fileName }}</div>
             <div class="history-meta">
@@ -52,27 +40,27 @@
           </div>
 
           <div class="history-downloads">
-            <button 
-              v-if="item.result?.png" 
-              @click="handleDownload(item.result.png, item.fileName + '.png')"
+            <button
+              v-if="item.result?.png"
               class="btn-download"
               title="Download PNG"
+              @click="handleDownload(item.result.png, item.fileName + '.png')"
             >
               PNG
             </button>
-            <button 
-              v-if="item.result?.webp" 
-              @click="handleDownload(item.result.webp, item.fileName + '.webp')"
+            <button
+              v-if="item.result?.webp"
               class="btn-download"
               title="Download WEBP"
+              @click="handleDownload(item.result.webp, item.fileName + '.webp')"
             >
               WEBP
             </button>
-            <button 
-              v-if="item.result?.webm" 
-              @click="handleDownload(item.result.webm, item.fileName + '.webm')"
+            <button
+              v-if="item.result?.webm"
               class="btn-download"
               title="Download WEBM"
+              @click="handleDownload(item.result.webm, item.fileName + '.webm')"
             >
               WEBM
             </button>
@@ -104,7 +92,7 @@ const handleClearHistory = () => {
   }
 }
 
-const handlePreview = (item) => {
+const handlePreview = item => {
   if (item.type === 'image') {
     showPreview('image', item.result?.png || item.preview, {
       width: item.width,
@@ -123,17 +111,17 @@ const handleDownload = (url, filename) => {
   downloadFile(url, filename)
 }
 
-const formatTime = (timestamp) => {
+const formatTime = timestamp => {
   const now = Date.now()
   const diff = now - timestamp
-  
+
   const minutes = Math.floor(diff / 60000)
   const hours = Math.floor(diff / 3600000)
-  
+
   if (minutes < 1) return t('history.justNow')
   if (minutes < 60) return t('history.minutesAgo', { n: minutes })
   if (hours < 24) return t('history.hoursAgo', { n: hours })
-  
+
   const date = new Date(timestamp)
   return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`
 }

@@ -4,16 +4,16 @@ const state = reactive({
   visible: false,
   type: 'image',
   src: '',
-  info: { 
-    width: 0, 
-    height: 0, 
-    size: 0, 
-    duration: 0 
+  info: {
+    width: 0,
+    height: 0,
+    size: 0,
+    duration: 0
   }
 })
 
 export function usePreviewModal() {
-  const openPreview = (options) => {
+  const openPreview = options => {
     state.type = options.type || 'image'
     state.src = options.src
     state.info = options.info || {}

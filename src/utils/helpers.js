@@ -62,20 +62,20 @@ export function getHistory() {
   try {
     const data = localStorage.getItem(HISTORY_KEY)
     if (!data) return []
-    
+
     const history = JSON.parse(data)
     const now = Date.now()
-    
+
     // 过滤掉24小时前的记录
     const validHistory = history.filter(item => {
       return now - item.timestamp < HISTORY_EXPIRY
     })
-    
+
     // 更新存储
     if (validHistory.length !== history.length) {
       localStorage.setItem(HISTORY_KEY, JSON.stringify(validHistory))
     }
-    
+
     return validHistory
   } catch (e) {
     return []

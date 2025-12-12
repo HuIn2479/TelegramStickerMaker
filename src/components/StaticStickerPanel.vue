@@ -5,7 +5,11 @@
       <div class="card-header">
         <div class="card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </div>
         <div class="card-title-group">
@@ -30,23 +34,15 @@
       </div>
       <div class="batch-actions">
         <button class="btn btn-primary btn-sm" @click="convertAll">{{ t('batch.convertAll') }}</button>
-        <button 
-          v-show="hasDoneTasks" 
-          class="btn btn-secondary btn-sm" 
-          @click="downloadAll('png')"
-        >
+        <button v-show="hasDoneTasks" class="btn btn-secondary btn-sm" @click="downloadAll('png')">
           {{ t('batch.downloadAllPNG') }}
         </button>
-        <button 
-          v-show="hasDoneTasks" 
-          class="btn btn-secondary btn-sm" 
-          @click="downloadAll('webp')"
-        >
+        <button v-show="hasDoneTasks" class="btn btn-secondary btn-sm" @click="downloadAll('webp')">
           {{ t('batch.downloadAllWEBP') }}
         </button>
         <button class="btn btn-secondary btn-sm" @click="clearAll">{{ t('batch.clear') }}</button>
       </div>
-      
+
       <div class="batch-list">
         <BatchItem
           v-for="task in tasks"
@@ -114,35 +110,33 @@ const hasTasks = computed(() => tasks.value.length > 0)
 const hasDoneTasks = computed(() => tasks.value.some(t => t.status === 'done'))
 const pendingTasks = computed(() => tasks.value.filter(t => t.status === 'pending'))
 
-const handleFilesSelected = (files) => {
+const handleFilesSelected = files => {
   // 过滤掉不支持的文件类型（排除 GIF 动图）
   const validFiles = files.filter(file => {
-    const isValid = file.type === 'image/png' || 
-                    file.type === 'image/webp' || 
-                    file.type === 'image/jpeg' || 
-                    file.type === 'image/jpg'
+    const isValid =
+      file.type === 'image/png' || file.type === 'image/webp' || file.type === 'image/jpeg' || file.type === 'image/jpg'
     return isValid
   })
-  
+
   if (validFiles.length === 0) {
     alert(t('alerts.invalidFormat'))
     return
   }
-  
+
   if (validFiles.length < files.length) {
     alert(t('alerts.filesFiltered', { n: files.length - validFiles.length }))
   }
-  
+
   // 限制最多一次上传的文件数量
   const limits = getUploadLimits()
   const MAX_FILES = limits.maxImageFiles
-  
+
   if (validFiles.length > MAX_FILES) {
     alert(t('alerts.maxFiles', { max: MAX_FILES }))
   }
-  
+
   const filesToProcess = validFiles.slice(0, MAX_FILES)
-  
+
   filesToProcess.forEach(file => {
     const previewUrl = URL.createObjectURL(file)
     const task = reactive({
@@ -161,7 +155,7 @@ const handleFilesSelected = (files) => {
   })
 }
 
-const loadImageMetadata = (task) => {
+const loadImageMetadata = task => {
   const img = new Image()
   img.onload = () => {
     task.width = img.naturalWidth
@@ -175,7 +169,7 @@ const loadImageMetadata = (task) => {
   img.src = task.previewUrl
 }
 
-const convertSingle = async (taskId) => {
+const convertSingle = async taskId => {
   const task = tasks.value.find(t => t.id === taskId)
   if (!task) return
 
@@ -183,14 +177,14 @@ const convertSingle = async (taskId) => {
   task.progress = { percentage: 0, message: t('status.preparing') }
 
   // 订阅 WebSocket 进度更新
-  const unsubscribe = websocket?.subscribe(taskId, (data) => {
+  const unsubscribe = websocket?.subscribe(taskId, data => {
     if (data.type === 'progress') {
       task.progress = data.progress
     } else if (data.type === 'complete') {
       task.status = 'done'
       task.result = data.result?.result || data.result
       task.progress = { percentage: 100, message: t('status.completed') }
-      
+
       // 保存到历史记录
       if (task.result && task.result.png && task.result.webp) {
         saveToHistory({
@@ -207,7 +201,7 @@ const convertSingle = async (taskId) => {
           }
         })
       }
-      
+
       emit('converted')
       unsubscribe?.()
     } else if (data.type === 'error') {
@@ -233,12 +227,12 @@ const convertSingle = async (taskId) => {
     if (!response.ok) {
       throw new Error(data.error || '转换失败')
     }
-    
+
     // 如果没有 WebSocket，使用传统方式
     if (!websocket) {
       task.status = 'done'
       task.result = data.result
-      
+
       saveToHistory({
         id: task.id,
         type: 'image',
@@ -252,7 +246,7 @@ const convertSingle = async (taskId) => {
           webp: task.result.webp.url
         }
       })
-      
+
       emit('converted')
     }
   } catch (error) {
@@ -279,22 +273,24 @@ const downloadResult = ({ id, format }) => {
   downloadFile(task.result[format].url, `${baseName}.${format}`)
 }
 
-const downloadAll = async (format) => {
+const downloadAll = async format => {
   const completedTasks = tasks.value.filter(t => t.status === 'done' && t.result && t.result[format])
-  
+
   if (completedTasks.length === 0) {
     return
   }
 
   try {
     // 准备文件列表
-    const files = completedTasks.map(task => {
-      const baseName = task.name.replace(/\.[^.]+$/, '')
-      return {
-        url: task.result[format].url,
-        name: `${baseName}.${format}`
-      }
-    }).filter(file => file.url) // 过滤掉没有 url 的文件
+    const files = completedTasks
+      .map(task => {
+        const baseName = task.name.replace(/\.[^.]+$/, '')
+        return {
+          url: task.result[format].url,
+          name: `${baseName}.${format}`
+        }
+      })
+      .filter(file => file.url) // 过滤掉没有 url 的文件
 
     // 调用后端打包下载 API
     const response = await fetch('/api/download-batch', {
@@ -325,7 +321,7 @@ const downloadAll = async (format) => {
   }
 }
 
-const removeTask = (taskId) => {
+const removeTask = taskId => {
   const task = tasks.value.find(t => t.id === taskId)
   if (task && task.previewUrl) {
     URL.revokeObjectURL(task.previewUrl)
@@ -333,7 +329,7 @@ const removeTask = (taskId) => {
   tasks.value = tasks.value.filter(t => t.id !== taskId)
 }
 
-const retryTask = (taskId) => {
+const retryTask = taskId => {
   const task = tasks.value.find(t => t.id === taskId)
   if (task) {
     task.status = 'pending'
@@ -351,5 +347,4 @@ const clearAll = () => {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

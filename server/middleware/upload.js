@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     // 修复原始文件名编码
     file.originalname = fixFilenameEncoding(file.originalname)
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`
     const ext = path.extname(file.originalname)
     cb(null, `${uniqueSuffix}${ext}`)
   }
@@ -66,11 +66,11 @@ export function handleUploadError(err, req, res, next) {
     }
     return res.status(400).json({ error: err.message })
   }
-  
+
   if (err) {
     return res.status(400).json({ error: err.message })
   }
-  
+
   next()
 }
 

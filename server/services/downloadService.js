@@ -20,7 +20,7 @@ export class DownloadService {
     res.type('application/zip')
 
     // 错误处理
-    archive.on('error', (err) => {
+    archive.on('error', err => {
       logger.error('Archive error:', err)
       throw err
     })

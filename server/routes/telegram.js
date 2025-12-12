@@ -20,13 +20,13 @@ const router = express.Router()
 router.post('/telegram/validate', async (req, res) => {
   try {
     const { botToken } = req.body
-    
+
     if (!botToken) {
       return res.status(400).json({ error: 'Bot token is required' })
     }
-    
+
     const result = await telegramService.validateBotToken(botToken)
-    
+
     if (result.valid) {
       res.json({
         valid: true,
@@ -52,18 +52,18 @@ router.post('/telegram/validate', async (req, res) => {
 router.post('/telegram/check-pack', async (req, res) => {
   try {
     const { botToken, packName } = req.body
-    
+
     if (!botToken || !packName) {
       return res.status(400).json({ error: 'Bot token and pack name are required' })
     }
-    
+
     // 获取机器人信息
     const botInfo = await telegramService.getBotInfo(botToken)
     const fullPackName = `${packName}_by_${botInfo.username}`
-    
+
     // 检查贴纸包
     const stickerSet = await telegramService.getStickerSet(botToken, fullPackName)
-    
+
     if (stickerSet) {
       res.json({
         exists: true,
@@ -91,7 +91,7 @@ router.post('/telegram/check-pack', async (req, res) => {
 router.post('/telegram/upload', async (req, res) => {
   try {
     const { botToken, userId, packName, packTitle, emoji, files } = req.body
-    
+
     // 验证必需参数
     if (!botToken) {
       return res.status(400).json({ error: 'Bot token is required' })
@@ -105,11 +105,11 @@ router.post('/telegram/upload', async (req, res) => {
     if (!files || !Array.isArray(files) || files.length === 0) {
       return res.status(400).json({ error: 'At least one file is required' })
     }
-    
+
     // 验证文件存在
     const outputDir = config.paths.output
     const validFiles = []
-    
+
     for (const file of files) {
       const filePath = path.join(outputDir, file)
       if (fs.existsSync(filePath)) {
@@ -119,23 +119,23 @@ router.post('/telegram/upload', async (req, res) => {
         }
       }
     }
-    
+
     if (validFiles.length === 0) {
       return res.status(400).json({ error: 'No valid sticker files found' })
     }
-    
+
     logger.info(`Starting upload of ${validFiles.length} stickers to Telegram`)
-    
+
     // 生成上传任务 ID
     const uploadId = `upload_${Date.now()}`
-    
+
     // 立即返回响应，上传在后台进行
     res.json({
       uploadId,
       message: 'Upload started',
       totalFiles: validFiles.length
     })
-    
+
     // 异步执行上传
     const results = await telegramService.batchUploadStickers(
       botToken,
@@ -144,7 +144,7 @@ router.post('/telegram/upload', async (req, res) => {
       packTitle || 'My Sticker Pack',
       validFiles,
       emoji || '😊',
-      (progress) => {
+      progress => {
         // 通过 WebSocket 发送进度
         wsManager.broadcast({
           type: 'telegram_upload_progress',
@@ -153,7 +153,7 @@ router.post('/telegram/upload', async (req, res) => {
         })
       }
     )
-    
+
     // 发送完成通知
     wsManager.broadcast({
       type: 'telegram_upload_complete',
@@ -166,12 +166,11 @@ router.post('/telegram/upload', async (req, res) => {
         failedFiles: results.failed
       }
     })
-    
+
     logger.info(`Upload complete: ${results.success.length} success, ${results.failed.length} failed`)
-    
   } catch (error) {
     logger.error('Upload error:', error)
-    
+
     // 如果还没发送响应
     if (!res.headersSent) {
       res.status(500).json({ error: error.message })
@@ -192,12 +191,13 @@ router.post('/telegram/upload', async (req, res) => {
 router.get('/telegram/output-files', (req, res) => {
   try {
     const outputDir = config.paths.output
-    
+
     if (!fs.existsSync(outputDir)) {
       return res.json({ files: [] })
     }
-    
-    const files = fs.readdirSync(outputDir)
+
+    const files = fs
+      .readdirSync(outputDir)
       .filter(file => {
         const ext = path.extname(file).toLowerCase()
         return ext === '.webp' || ext === '.webm'
@@ -214,7 +214,7 @@ router.get('/telegram/output-files', (req, res) => {
         }
       })
       .sort((a, b) => b.mtime - a.mtime)
-    
+
     res.json({ files, total: files.length })
   } catch (error) {
     logger.error('Get output files error:', error)

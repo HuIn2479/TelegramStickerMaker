@@ -5,7 +5,9 @@
       <div class="card-header">
         <div class="card-icon telegram-icon">
           <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .37z"/>
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .37z"
+            />
           </svg>
         </div>
         <div class="card-title-group">
@@ -19,30 +21,62 @@
         <div class="form-item">
           <label class="form-label">{{ t('telegram.config.botToken') }}</label>
           <div class="form-input-group">
-            <input v-model="botToken" class="form-input" :type="showToken ? 'text' : 'password'" :placeholder="t('telegram.config.botTokenPlaceholder')" @blur="saveConfig" />
+            <input
+              v-model="botToken"
+              class="form-input"
+              :type="showToken ? 'text' : 'password'"
+              :placeholder="t('telegram.config.botTokenPlaceholder')"
+              @blur="saveConfig"
+            />
             <div class="token-actions">
-              <button class="token-icon-btn" @click="showToken = !showToken" :title="showToken ? '隐藏' : '显示'">
-                <svg v-if="showToken" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-                <svg v-else viewBox="0 0 24 24" fill="currentColor"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
+              <button class="token-icon-btn" :title="showToken ? '隐藏' : '显示'" @click="showToken = !showToken">
+                <svg v-if="showToken" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+                  />
+                </svg>
+                <svg v-else viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"
+                  />
+                </svg>
               </button>
-              <button 
-                class="token-validate-btn" 
+              <button
+                class="token-validate-btn"
                 :class="{ 'token-validate-btn_disabled': !botToken || validating }"
-                @click="validateToken" 
                 :disabled="!botToken || validating"
+                @click="validateToken"
               >
-                <svg v-if="validating" class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="12"/></svg>
+                <svg
+                  v-if="validating"
+                  class="spin"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="12" />
+                </svg>
                 <span>{{ validating ? '验证中' : t('telegram.config.validate') }}</span>
               </button>
             </div>
           </div>
           <!-- Token 验证结果 -->
           <div v-if="botInfo" class="token-result token-result_success">
-            <svg class="token-result__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-            <span class="token-result__text">已连接 <strong>@{{ botInfo.username }}</strong></span>
+            <svg class="token-result__icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+            </svg>
+            <span class="token-result__text">
+              已连接
+              <strong>@{{ botInfo.username }}</strong>
+            </span>
           </div>
           <div v-if="tokenError" class="token-result token-result_error">
-            <svg class="token-result__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            <svg class="token-result__icon" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+              />
+            </svg>
             <span class="token-result__text">{{ tokenError }}</span>
           </div>
         </div>
@@ -50,19 +84,37 @@
         <!-- 用户 ID -->
         <div class="form-item">
           <label class="form-label">{{ t('telegram.config.userId') }}</label>
-          <input v-model="userId" class="form-input" type="text" :placeholder="t('telegram.config.userIdPlaceholder')" @blur="saveConfig" />
+          <input
+            v-model="userId"
+            class="form-input"
+            type="text"
+            :placeholder="t('telegram.config.userIdPlaceholder')"
+            @blur="saveConfig"
+          />
         </div>
 
         <!-- 贴纸包名称 -->
         <div class="form-item">
           <label class="form-label">{{ t('telegram.config.packName') }}</label>
-          <input v-model="packName" class="form-input" type="text" :placeholder="t('telegram.config.packNamePlaceholder')" @blur="saveConfig" />
+          <input
+            v-model="packName"
+            class="form-input"
+            type="text"
+            :placeholder="t('telegram.config.packNamePlaceholder')"
+            @blur="saveConfig"
+          />
         </div>
 
         <!-- 贴纸包标题 -->
         <div class="form-item">
           <label class="form-label">{{ t('telegram.config.packTitle') }}</label>
-          <input v-model="packTitle" class="form-input" type="text" :placeholder="t('telegram.config.packTitlePlaceholder')" @blur="saveConfig" />
+          <input
+            v-model="packTitle"
+            class="form-input"
+            type="text"
+            :placeholder="t('telegram.config.packTitlePlaceholder')"
+            @blur="saveConfig"
+          />
         </div>
 
         <!-- 默认表情 -->
@@ -71,16 +123,21 @@
           <div class="emoji-selector" @click="showEmojiPicker = !showEmojiPicker">
             <span class="emoji-preview__icon">{{ defaultEmoji }}</span>
             <span class="emoji-preview__hint">点击更换</span>
-            <svg class="emoji-arrow" :class="{ 'emoji-arrow_up': showEmojiPicker }" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+            <svg
+              class="emoji-arrow"
+              :class="{ 'emoji-arrow_up': showEmojiPicker }"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
             </svg>
           </div>
           <!-- Emoji 选择器 -->
           <div v-if="showEmojiPicker" class="emoji-picker">
             <div class="emoji-grid">
-              <button 
-                v-for="emoji in emojiList" 
-                :key="emoji" 
+              <button
+                v-for="emoji in emojiList"
+                :key="emoji"
                 class="emoji-item"
                 :class="{ 'emoji-item_selected': defaultEmoji === emoji }"
                 @click="selectEmoji(emoji)"
@@ -92,27 +149,33 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 文件选择卡片 -->
     <div class="card files-card">
       <div class="card-header">
         <div class="card-icon files-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </div>
         <div class="card-title-group">
           <h3 class="card-title">{{ t('telegram.files.title') }}</h3>
-          <p class="card-subtitle" v-if="outputFiles.length > 0">已选 {{ selectedFiles.length }}/{{ outputFiles.length }}</p>
-          <p class="card-subtitle" v-else>暂无转换完成的文件</p>
+          <p v-if="outputFiles.length > 0" class="card-subtitle">
+            已选 {{ selectedFiles.length }}/{{ outputFiles.length }}
+          </p>
+          <p v-else class="card-subtitle">暂无转换完成的文件</p>
         </div>
-        <div class="card-actions" v-if="outputFiles.length > 0">
-          <button class="btn btn-secondary btn-sm" @click="loadOutputFiles" :disabled="loadingFiles">刷新</button>
+        <div v-if="outputFiles.length > 0" class="card-actions">
+          <button class="btn btn-secondary btn-sm" :disabled="loadingFiles" @click="loadOutputFiles">刷新</button>
         </div>
       </div>
 
       <!-- 操作栏 -->
-      <div class="files-toolbar" v-if="outputFiles.length > 0">
+      <div v-if="outputFiles.length > 0" class="files-toolbar">
         <label class="checkbox-label">
           <input type="checkbox" class="checkbox" :checked="isAllSelected" @change="toggleSelectAll" />
           <span>{{ t('telegram.files.selectAll') }}</span>
@@ -125,19 +188,19 @@
         <div class="loading-spinner"></div>
         <span>{{ t('telegram.files.loading') }}</span>
       </div>
-    
+
       <!-- 空状态 -->
       <div v-else-if="outputFiles.length === 0" class="empty-state">
         <div class="empty-icon">📁</div>
         <p>{{ t('telegram.files.empty') }}</p>
         <p class="tip">{{ t('telegram.files.emptyHint') }}</p>
-        <button class="btn btn-primary btn-sm" @click="loadOutputFiles" style="margin-top: 12px;">刷新列表</button>
+        <button class="btn btn-primary btn-sm" style="margin-top: 12px" @click="loadOutputFiles">刷新列表</button>
       </div>
-    
+
       <!-- 文件网格 -->
       <div v-else class="file-grid">
-        <div 
-          v-for="file in outputFiles" 
+        <div
+          v-for="file in outputFiles"
           :key="file.name"
           class="file-item"
           :class="{ selected: isSelected(file.name) }"
@@ -145,37 +208,54 @@
         >
           <div class="file-preview">
             <img v-if="file.type === 'static'" :src="`/output/${file.name}`" :alt="file.name" />
-            <video v-else :src="`/output/${file.name}`" muted loop @mouseenter="$event.target.play()" @mouseleave="$event.target.pause()"></video>
+            <video
+              v-else
+              :src="`/output/${file.name}`"
+              muted
+              loop
+              @mouseenter="$event.target.play()"
+              @mouseleave="$event.target.pause()"
+            ></video>
             <span class="file-type-badge">{{ file.type === 'static' ? 'WEBP' : 'WEBM' }}</span>
-            <span class="file-check" v-if="isSelected(file.name)">✓</span>
+            <span v-if="isSelected(file.name)" class="file-check">✓</span>
           </div>
         </div>
       </div>
     </div>
-    
+
     <!-- 上传卡片 -->
-    <div class="card upload-action-card" v-if="selectedFiles.length > 0 || uploading || uploadResult">
+    <div v-if="selectedFiles.length > 0 || uploading || uploadResult" class="card upload-action-card">
       <div class="card-header">
         <div class="card-icon upload-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </div>
         <div class="card-title-group">
           <h3 class="card-title">上传到 Telegram</h3>
-          <p class="card-subtitle" v-if="!uploading && !uploadResult">{{ t('telegram.upload.selected', { n: selectedFiles.length }) }}</p>
-          <p class="card-subtitle" v-else-if="uploading">正在上传...</p>
-          <p class="card-subtitle" v-else>上传完成</p>
+          <p v-if="!uploading && !uploadResult" class="card-subtitle">
+            {{
+              t('telegram.upload.selected', {
+                n: selectedFiles.length
+              })
+            }}
+          </p>
+          <p v-else-if="uploading" class="card-subtitle">正在上传...</p>
+          <p v-else class="card-subtitle">上传完成</p>
         </div>
       </div>
 
       <!-- 上传警告 -->
-      <div class="upload-warning" v-if="selectedFiles.length > 120 && !uploading">
+      <div v-if="selectedFiles.length > 120 && !uploading" class="upload-warning">
         <span>⚠️ {{ t('telegram.upload.limitWarning') }}</span>
       </div>
 
       <!-- 上传进度 -->
-      <div class="upload-progress" v-if="uploading">
+      <div v-if="uploading" class="upload-progress">
         <div class="progress-info">
           <span>{{ uploadProgress.current }}/{{ uploadProgress.total }}</span>
           <span>{{ uploadProgress.fileName }}</span>
@@ -185,18 +265,20 @@
         </div>
         <span class="progress-percent">{{ progressPercent }}%</span>
       </div>
-    
+
       <!-- 上传结果 -->
-      <div class="upload-result-box" v-if="uploadResult && !uploading">
+      <div v-if="uploadResult && !uploading" class="upload-result-box">
         <div class="result-stats">
           <span class="text-success">✓ 成功 {{ uploadResult.success }}</span>
-          <span class="text-warn" v-if="uploadResult.failed > 0"> · 失败 {{ uploadResult.failed }}</span>
+          <span v-if="uploadResult.failed > 0" class="text-warn">· 失败 {{ uploadResult.failed }}</span>
         </div>
-        <a v-if="uploadResult.packUrl" :href="uploadResult.packUrl" target="_blank" class="btn btn-primary btn-sm">查看贴纸包</a>
+        <a v-if="uploadResult.packUrl" :href="uploadResult.packUrl" target="_blank" class="btn btn-primary btn-sm">
+          查看贴纸包
+        </a>
       </div>
 
       <!-- 上传按钮 -->
-      <button 
+      <button
         v-if="!uploadResult"
         class="btn btn-primary btn-block"
         :class="{ 'btn-disabled': !canUpload || uploading }"
@@ -207,13 +289,17 @@
         <span v-else>{{ t('telegram.upload.button') }}</span>
       </button>
     </div>
-    
+
     <!-- 帮助卡片 -->
     <div class="card help-card">
       <div class="card-header clickable" @click="showHelp = !showHelp">
         <div class="card-icon help-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </div>
         <div class="card-title-group">
@@ -225,15 +311,26 @@
       <div v-if="showHelp" class="help-content">
         <div class="help-section">
           <h4>{{ t('telegram.help.getToken') }}</h4>
-          <ol><li>{{ t('telegram.help.step1') }}</li><li>{{ t('telegram.help.step2') }}</li><li>{{ t('telegram.help.step3') }}</li></ol>
+          <ol>
+            <li>{{ t('telegram.help.step1') }}</li>
+            <li>{{ t('telegram.help.step2') }}</li>
+            <li>{{ t('telegram.help.step3') }}</li>
+          </ol>
         </div>
         <div class="help-section">
           <h4>{{ t('telegram.help.getUserId') }}</h4>
-          <ol><li>{{ t('telegram.help.userStep1') }}</li><li>{{ t('telegram.help.userStep2') }}</li></ol>
+          <ol>
+            <li>{{ t('telegram.help.userStep1') }}</li>
+            <li>{{ t('telegram.help.userStep2') }}</li>
+          </ol>
         </div>
         <div class="help-section">
           <h4>{{ t('telegram.help.important') }}</h4>
-          <ul><li>{{ t('telegram.help.tip1') }}</li><li>{{ t('telegram.help.tip2') }}</li><li>{{ t('telegram.help.tip3') }}</li></ul>
+          <ul>
+            <li>{{ t('telegram.help.tip1') }}</li>
+            <li>{{ t('telegram.help.tip2') }}</li>
+            <li>{{ t('telegram.help.tip3') }}</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -267,32 +364,221 @@ const showEmojiPicker = ref(false)
 // Emoji 列表
 const emojiList = [
   // 表情
-  '😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '😊',
-  '😇', '🥰', '😍', '🤩', '😘', '😗', '😚', '😋', '😛', '😜',
-  '🤪', '😝', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑',
-  '😶', '😏', '😒', '🙄', '😬', '😮', '😯', '😲', '😳', '🥺',
-  '😦', '😧', '😨', '😰', '😥', '😢', '😭', '😱', '😖', '😣',
-  '😞', '😓', '😩', '😫', '🥱', '😤', '😡', '😠', '🤬', '😈',
-  '👿', '💀', '☠️', '💩', '🤡', '👹', '👺', '👻', '👽', '👾',
-  '🤖', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾',
+  '😀',
+  '😃',
+  '😄',
+  '😁',
+  '😆',
+  '😅',
+  '🤣',
+  '😂',
+  '🙂',
+  '😊',
+  '😇',
+  '🥰',
+  '😍',
+  '🤩',
+  '😘',
+  '😗',
+  '😚',
+  '😋',
+  '😛',
+  '😜',
+  '🤪',
+  '😝',
+  '🤗',
+  '🤭',
+  '🤫',
+  '🤔',
+  '🤐',
+  '🤨',
+  '😐',
+  '😑',
+  '😶',
+  '😏',
+  '😒',
+  '🙄',
+  '😬',
+  '😮',
+  '😯',
+  '😲',
+  '😳',
+  '🥺',
+  '😦',
+  '😧',
+  '😨',
+  '😰',
+  '😥',
+  '😢',
+  '😭',
+  '😱',
+  '😖',
+  '😣',
+  '😞',
+  '😓',
+  '😩',
+  '😫',
+  '🥱',
+  '😤',
+  '😡',
+  '😠',
+  '🤬',
+  '😈',
+  '👿',
+  '💀',
+  '☠️',
+  '💩',
+  '🤡',
+  '👹',
+  '👺',
+  '👻',
+  '👽',
+  '👾',
+  '🤖',
+  '😺',
+  '😸',
+  '😹',
+  '😻',
+  '😼',
+  '😽',
+  '🙀',
+  '😿',
+  '😾',
   // 手势
-  '👋', '🤚', '🖐️', '✋', '🖖', '👌', '🤌', '🤏', '✌️', '🤞',
-  '🤟', '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '☝️', '👍',
-  '👎', '✊', '👊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝',
-  '🙏', '✍️', '💅', '🤳', '💪', '🦾', '🦿', '🦵', '🦶', '👂',
+  '👋',
+  '🤚',
+  '🖐️',
+  '✋',
+  '🖖',
+  '👌',
+  '🤌',
+  '🤏',
+  '✌️',
+  '🤞',
+  '🤟',
+  '🤘',
+  '🤙',
+  '👈',
+  '👉',
+  '👆',
+  '🖕',
+  '👇',
+  '☝️',
+  '👍',
+  '👎',
+  '✊',
+  '👊',
+  '🤛',
+  '🤜',
+  '👏',
+  '🙌',
+  '👐',
+  '🤲',
+  '🤝',
+  '🙏',
+  '✍️',
+  '💅',
+  '🤳',
+  '💪',
+  '🦾',
+  '🦿',
+  '🦵',
+  '🦶',
+  '👂',
   // 爱心
-  '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔',
-  '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟', '♥️',
+  '❤️',
+  '🧡',
+  '💛',
+  '💚',
+  '💙',
+  '💜',
+  '🖤',
+  '🤍',
+  '🤎',
+  '💔',
+  '❣️',
+  '💕',
+  '💞',
+  '💓',
+  '💗',
+  '💖',
+  '💘',
+  '💝',
+  '💟',
+  '♥️',
   // 动物
-  '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯',
-  '🦁', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐦', '🐤', '🦆',
-  '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋',
+  '🐶',
+  '🐱',
+  '🐭',
+  '🐹',
+  '🐰',
+  '🦊',
+  '🐻',
+  '🐼',
+  '🐨',
+  '🐯',
+  '🦁',
+  '🐮',
+  '🐷',
+  '🐸',
+  '🐵',
+  '🐔',
+  '🐧',
+  '🐦',
+  '🐤',
+  '🦆',
+  '🦅',
+  '🦉',
+  '🦇',
+  '🐺',
+  '🐗',
+  '🐴',
+  '🦄',
+  '🐝',
+  '🐛',
+  '🦋',
   // 食物
-  '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈',
-  '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦',
+  '🍎',
+  '🍐',
+  '🍊',
+  '🍋',
+  '🍌',
+  '🍉',
+  '🍇',
+  '🍓',
+  '🫐',
+  '🍈',
+  '🍒',
+  '🍑',
+  '🥭',
+  '🍍',
+  '🥥',
+  '🥝',
+  '🍅',
+  '🍆',
+  '🥑',
+  '🥦',
   // 物品
-  '⭐', '🌟', '✨', '💫', '🔥', '💥', '💢', '💦', '💨', '🕳️',
-  '💣', '💬', '👁️‍🗨️', '🗨️', '🗯️', '💭', '💤', '🎉', '🎊', '🎈'
+  '⭐',
+  '🌟',
+  '✨',
+  '💫',
+  '🔥',
+  '💥',
+  '💢',
+  '💦',
+  '💨',
+  '🕳️',
+  '💣',
+  '💬',
+  '👁️‍🗨️',
+  '🗨️',
+  '🗯️',
+  '💭',
+  '💤',
+  '🎉',
+  '🎊',
+  '🎈'
 ]
 
 // 文件状态
@@ -312,11 +598,7 @@ const isAllSelected = computed(() => {
 })
 
 const canUpload = computed(() => {
-  return botToken.value && 
-         userId.value && 
-         packName.value && 
-         selectedFiles.value.length > 0 &&
-         botInfo.value
+  return botToken.value && userId.value && packName.value && selectedFiles.value.length > 0 && botInfo.value
 })
 
 const progressPercent = computed(() => {
@@ -350,7 +632,7 @@ const saveConfig = () => {
   localStorage.setItem('telegram_config', JSON.stringify(config))
 }
 
-const selectEmoji = (emoji) => {
+const selectEmoji = emoji => {
   defaultEmoji.value = emoji
   showEmojiPicker.value = false
   saveConfig()
@@ -358,20 +640,20 @@ const selectEmoji = (emoji) => {
 
 const validateToken = async () => {
   if (!botToken.value) return
-  
+
   validating.value = true
   tokenError.value = ''
   botInfo.value = null
-  
+
   try {
     const response = await fetch(`${API_BASE}/api/telegram/validate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ botToken: botToken.value })
     })
-    
+
     const data = await response.json()
-    
+
     if (data.valid) {
       botInfo.value = data.bot
       saveConfig()
@@ -387,7 +669,7 @@ const validateToken = async () => {
 
 const loadOutputFiles = async () => {
   loadingFiles.value = true
-  
+
   try {
     const response = await fetch(`${API_BASE}/api/telegram/output-files`)
     const data = await response.json()
@@ -399,11 +681,11 @@ const loadOutputFiles = async () => {
   }
 }
 
-const isSelected = (fileName) => {
+const isSelected = fileName => {
   return selectedFiles.value.includes(fileName)
 }
 
-const toggleSelect = (fileName) => {
+const toggleSelect = fileName => {
   const index = selectedFiles.value.indexOf(fileName)
   if (index === -1) {
     selectedFiles.value.push(fileName)
@@ -424,7 +706,7 @@ const clearSelection = () => {
   selectedFiles.value = []
 }
 
-const truncateName = (name) => {
+const truncateName = name => {
   if (name.length > 15) {
     return name.substring(0, 12) + '...'
   }
@@ -433,12 +715,12 @@ const truncateName = (name) => {
 
 const startUpload = async () => {
   if (!canUpload.value) return
-  
+
   uploading.value = true
   uploadComplete.value = false
   uploadResult.value = null
   uploadProgress.value = { current: 0, total: selectedFiles.value.length, fileName: '' }
-  
+
   try {
     const response = await fetch(`${API_BASE}/api/telegram/upload`, {
       method: 'POST',
@@ -452,13 +734,13 @@ const startUpload = async () => {
         files: selectedFiles.value
       })
     })
-    
+
     const data = await response.json()
-    
+
     if (!response.ok) {
       throw new Error(data.error || 'Upload failed')
     }
-    
+
     // 上传已开始，等待 WebSocket 通知
   } catch (error) {
     uploading.value = false
@@ -467,7 +749,7 @@ const startUpload = async () => {
 }
 
 // WebSocket 消息处理
-const handleWsMessage = (message) => {
+const handleWsMessage = message => {
   if (message.type === 'telegram_upload_progress') {
     uploadProgress.value = {
       current: message.current,
@@ -490,12 +772,12 @@ const handleWsMessage = (message) => {
 onMounted(() => {
   loadConfig()
   loadOutputFiles()
-  
+
   // 如果有保存的 token，自动验证
   if (botToken.value) {
     validateToken()
   }
-  
+
   // 订阅 WebSocket 消息
   subscribe('telegram', handleWsMessage)
 })
@@ -1040,7 +1322,9 @@ onUnmounted(() => {
 
 /* ===== 动画 ===== */
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .spin {
@@ -1052,7 +1336,7 @@ onUnmounted(() => {
   .file-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .emoji-grid {
     grid-template-columns: repeat(6, 1fr);
   }

@@ -18,13 +18,13 @@ export class ImageService {
     const tracker = taskId ? new ProgressTracker(taskId, wsManager, 5) : null
     try {
       tracker?.update(1, '读取图片信息...')
-      
+
       // 获取原始图片信息
       const metadata = await sharp(inputPath).metadata()
       const { width: originalWidth, height: originalHeight } = metadata
 
       tracker?.update(2, '计算缩放尺寸...')
-      
+
       // 计算新尺寸
       const { newWidth, newHeight } = this.calculateDimensions(originalWidth, originalHeight)
 
@@ -36,7 +36,7 @@ export class ImageService {
       const webpPath = path.join(config.paths.output, `${outputFilename}.webp`)
 
       tracker?.update(3, '转换为 PNG 格式...')
-      
+
       // 转换为 PNG
       await sharp(inputPath)
         .resize(newWidth, newHeight, { fit: 'fill' })
@@ -44,7 +44,7 @@ export class ImageService {
         .toFile(pngPath)
 
       tracker?.update(4, '转换为 WEBP 格式...')
-      
+
       // 转换为 WEBP
       await sharp(inputPath)
         .resize(newWidth, newHeight, { fit: 'fill' })
@@ -52,7 +52,7 @@ export class ImageService {
         .toFile(webpPath)
 
       tracker?.update(5, '完成转换')
-      
+
       // 获取输出文件大小
       const pngStats = fs.statSync(pngPath)
       const webpStats = fs.statSync(webpPath)
@@ -80,7 +80,7 @@ export class ImageService {
           }
         }
       }
-      
+
       tracker?.complete(result)
       return result
     } catch (error) {

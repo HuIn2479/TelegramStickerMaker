@@ -16,8 +16,8 @@ class WebSocketManager {
    * 初始化 WebSocket 服务器
    */
   initialize(server) {
-    this.wss = new WebSocketServer({ 
-      server, 
+    this.wss = new WebSocketServer({
+      server,
       path: '/ws',
       // 添加配置以提高连接稳定性
       clientTracking: true,
@@ -37,7 +37,7 @@ class WebSocketManager {
       })
 
       // 处理消息
-      ws.on('message', (message) => {
+      ws.on('message', message => {
         try {
           const data = JSON.parse(message.toString('utf8'))
           this.handleMessage(ws, data)
@@ -53,7 +53,7 @@ class WebSocketManager {
       })
 
       // 处理错误
-      ws.on('error', (error) => {
+      ws.on('error', error => {
         logger.error(`WebSocket error for ${clientId}:`, error)
       })
 
@@ -67,7 +67,7 @@ class WebSocketManager {
 
     // 心跳检测 - 每30秒ping一次
     this.heartbeatInterval = setInterval(() => {
-      this.wss.clients.forEach((ws) => {
+      this.wss.clients.forEach(ws => {
         if (ws.isAlive === false) {
           logger.warn(`Terminating inactive client: ${ws.clientId}`)
           return ws.terminate()
@@ -149,7 +149,8 @@ class WebSocketManager {
    * 发送消息给特定客户端
    */
   send(ws, data) {
-    if (ws.readyState === 1) { // OPEN
+    if (ws.readyState === 1) {
+      // OPEN
       // 直接发送字符串，ws 库会自动使用 UTF-8 编码
       ws.send(JSON.stringify(data))
     }
@@ -162,9 +163,10 @@ class WebSocketManager {
     if (!this.wss) return
 
     const message = typeof data === 'string' ? data : JSON.stringify(data)
-    
+
     this.wss.clients.forEach(ws => {
-      if (ws.readyState === 1) { // OPEN
+      if (ws.readyState === 1) {
+        // OPEN
         ws.send(message)
       }
     })

@@ -9,7 +9,7 @@ export const config = {
   // 环境配置
   env: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT || '3000', 10),
-  
+
   // 路径配置
   paths: {
     root: rootDir,
@@ -17,7 +17,7 @@ export const config = {
     output: path.join(rootDir, process.env.OUTPUT_DIR || 'output'),
     dist: path.join(rootDir, 'dist')
   },
-  
+
   // 文件上传配置
   upload: {
     maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '52428800', 10), // 50MB
@@ -27,7 +27,7 @@ export const config = {
     allowedVideoTypes: /gif|mp4|webm|quicktime|x-msvideo/,
     allowedMimeTypes: [
       'image/jpeg',
-      'image/jpg', 
+      'image/jpg',
       'image/png',
       'image/webp',
       'image/gif',
@@ -37,13 +37,13 @@ export const config = {
       'video/x-msvideo'
     ]
   },
-  
+
   // 文件清理配置
   cleanup: {
     interval: parseInt(process.env.CLEANUP_INTERVAL || '3600000', 10), // 1 hour
     maxAge: parseInt(process.env.FILE_MAX_AGE || '86400000', 10) // 24 hours
   },
-  
+
   // 贴纸格式要求
   sticker: {
     maxSize: 512,
@@ -55,7 +55,7 @@ export const config = {
       png: 9 // compression level
     }
   },
-  
+
   // CORS 配置
   cors: {
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',

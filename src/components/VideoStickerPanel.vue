@@ -5,7 +5,11 @@
       <div class="card-header">
         <div class="card-icon video-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </div>
         <div class="card-title-group">
@@ -30,16 +34,12 @@
       </div>
       <div class="batch-actions">
         <button class="btn btn-primary btn-sm" @click="convertAll">{{ t('batch.convertAll') }}</button>
-        <button 
-          v-show="hasDoneTasks" 
-          class="btn btn-secondary btn-sm" 
-          @click="downloadAll"
-        >
+        <button v-show="hasDoneTasks" class="btn btn-secondary btn-sm" @click="downloadAll">
           {{ t('batch.downloadAll') }}
         </button>
         <button class="btn btn-secondary btn-sm" @click="clearAll">{{ t('batch.clear') }}</button>
       </div>
-      
+
       <div class="batch-list">
         <BatchItem
           v-for="task in tasks"
@@ -122,36 +122,37 @@ const hasTasks = computed(() => tasks.value.length > 0)
 const hasDoneTasks = computed(() => tasks.value.some(t => t.status === 'done'))
 const pendingTasks = computed(() => tasks.value.filter(t => t.status === 'pending'))
 
-const handleFilesSelected = (files) => {
+const handleFilesSelected = files => {
   // 过滤掉不支持的文件类型（只允许 GIF 和视频）
   const validFiles = files.filter(file => {
-    const isValid = file.type === 'image/gif' || 
-                    file.type === 'video/mp4' || 
-                    file.type === 'video/webm' ||
-                    file.type === 'video/quicktime' || // MOV
-                    file.type === 'video/x-msvideo'    // AVI
+    const isValid =
+      file.type === 'image/gif' ||
+      file.type === 'video/mp4' ||
+      file.type === 'video/webm' ||
+      file.type === 'video/quicktime' || // MOV
+      file.type === 'video/x-msvideo' // AVI
     return isValid
   })
-  
+
   if (validFiles.length === 0) {
     alert(t('alerts.invalidVideoFormat'))
     return
   }
-  
+
   if (validFiles.length < files.length) {
     alert(t('alerts.filesFilteredVideo', { n: files.length - validFiles.length }))
   }
-  
+
   // 限制最多一次上传的视频文件数量
   const limits = getUploadLimits()
   const MAX_FILES = limits.maxVideoFiles
-  
+
   if (validFiles.length > MAX_FILES) {
     alert(t('alerts.maxVideos', { max: MAX_FILES }))
   }
-  
+
   const filesToProcess = validFiles.slice(0, MAX_FILES)
-  
+
   filesToProcess.forEach(file => {
     const previewUrl = URL.createObjectURL(file)
     const task = reactive({
@@ -173,11 +174,11 @@ const handleFilesSelected = (files) => {
   })
 }
 
-const loadVideoMetadata = (task) => {
+const loadVideoMetadata = task => {
   const video = document.createElement('video')
   video.preload = 'metadata' // 只加载元数据，不加载完整视频
   video.src = task.previewUrl
-  
+
   // 设置超时，避免无限等待
   const timeout = setTimeout(() => {
     if (task.duration === 0) {
@@ -190,7 +191,7 @@ const loadVideoMetadata = (task) => {
     video.src = ''
     video.load()
   }, 2000)
-  
+
   video.onloadedmetadata = () => {
     clearTimeout(timeout)
     task.duration = video.duration || 3
@@ -201,8 +202,8 @@ const loadVideoMetadata = (task) => {
     video.src = ''
     video.load()
   }
-  
-  video.onerror = (e) => {
+
+  video.onerror = e => {
     clearTimeout(timeout)
     // 对于 GIF，使用默认值继续
     if (task.file.type === 'image/gif') {
@@ -224,7 +225,7 @@ const updateTime = ({ id, startTime, endTime }) => {
   }
 }
 
-const previewTrim = (taskId) => {
+const previewTrim = taskId => {
   const task = tasks.value.find(t => t.id === taskId)
   if (!task) return
 
@@ -240,7 +241,7 @@ const previewTrim = (taskId) => {
   })
 }
 
-const convertSingle = async (taskId) => {
+const convertSingle = async taskId => {
   const task = tasks.value.find(t => t.id === taskId)
   if (!task) return
 
@@ -248,14 +249,14 @@ const convertSingle = async (taskId) => {
   task.progress = { percentage: 0, message: t('status.preparing') }
 
   // 订阅 WebSocket 进度更新
-  const unsubscribe = websocket?.subscribe(taskId, (data) => {
+  const unsubscribe = websocket?.subscribe(taskId, data => {
     if (data.type === 'progress') {
       task.progress = data.progress
     } else if (data.type === 'complete') {
       task.status = 'done'
       task.result = data.result?.result || data.result
       task.progress = { percentage: 100, message: t('status.completed') }
-      
+
       // 保存到历史记录
       if (task.result && task.result.url) {
         saveToHistory({
@@ -270,7 +271,7 @@ const convertSingle = async (taskId) => {
           }
         })
       }
-      
+
       emit('converted')
       unsubscribe?.()
     } else if (data.type === 'error') {
@@ -298,12 +299,12 @@ const convertSingle = async (taskId) => {
     if (!response.ok) {
       throw new Error(data.error || t('status.conversionFailed'))
     }
-    
+
     // 如果没有 WebSocket，使用传统方式
     if (!websocket) {
       task.status = 'done'
       task.result = data.result
-      
+
       saveToHistory({
         id: task.id,
         type: 'video',
@@ -315,7 +316,7 @@ const convertSingle = async (taskId) => {
           webm: task.result.url
         }
       })
-      
+
       emit('converted')
     }
   } catch (error) {
@@ -344,20 +345,22 @@ const downloadResult = ({ id }) => {
 
 const downloadAll = async () => {
   const completedTasks = tasks.value.filter(t => t.status === 'done' && t.result && t.result.url)
-  
+
   if (completedTasks.length === 0) {
     return
   }
 
   try {
     // 准备文件列表
-    const files = completedTasks.map(task => {
-      const baseName = task.name.replace(/\.[^.]+$/, '')
-      return {
-        url: task.result.url,
-        name: `${baseName}.webm`
-      }
-    }).filter(file => file.url) // 过滤掉没有 url 的文件
+    const files = completedTasks
+      .map(task => {
+        const baseName = task.name.replace(/\.[^.]+$/, '')
+        return {
+          url: task.result.url,
+          name: `${baseName}.webm`
+        }
+      })
+      .filter(file => file.url) // 过滤掉没有 url 的文件
 
     // 调用后端打包下载 API
     const response = await fetch('/api/download-batch', {
@@ -388,7 +391,7 @@ const downloadAll = async () => {
   }
 }
 
-const removeTask = (taskId) => {
+const removeTask = taskId => {
   const task = tasks.value.find(t => t.id === taskId)
   if (task && task.previewUrl) {
     URL.revokeObjectURL(task.previewUrl)
@@ -396,7 +399,7 @@ const removeTask = (taskId) => {
   tasks.value = tasks.value.filter(t => t.id !== taskId)
 }
 
-const retryTask = (taskId) => {
+const retryTask = taskId => {
   const task = tasks.value.find(t => t.id === taskId)
   if (task) {
     task.status = 'pending'
@@ -414,5 +417,4 @@ const clearAll = () => {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -28,7 +28,7 @@ export function useWebSocket() {
         reconnectAttempts.value = 0
       }
 
-      ws.value.onmessage = async (event) => {
+      ws.value.onmessage = async event => {
         try {
           let text = event.data
           // 如果收到的是 Blob，需要先转换为文本
@@ -49,7 +49,7 @@ export function useWebSocket() {
         attemptReconnect()
       }
 
-      ws.value.onerror = (error) => {
+      ws.value.onerror = error => {
         console.error('WebSocket error:', error)
       }
     } catch (error) {
@@ -61,7 +61,7 @@ export function useWebSocket() {
   /**
    * 处理 WebSocket 消息
    */
-  const handleMessage = (data) => {
+  const handleMessage = data => {
     const { type, taskId } = data
 
     switch (type) {
@@ -147,10 +147,10 @@ export function useWebSocket() {
   const unsubscribe = (taskId, callback) => {
     if (subscribers.has(taskId)) {
       subscribers.get(taskId).delete(callback)
-      
+
       if (subscribers.get(taskId).size === 0) {
         subscribers.delete(taskId)
-        
+
         // 发送取消订阅消息
         send({
           type: 'unsubscribe',
@@ -163,7 +163,7 @@ export function useWebSocket() {
   /**
    * 发送消息
    */
-  const send = (data) => {
+  const send = data => {
     if (ws.value && ws.value.readyState === WebSocket.OPEN) {
       ws.value.send(JSON.stringify(data))
     }

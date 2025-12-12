@@ -96,11 +96,11 @@ export default {
     config: {
       title: 'Telegram Config',
       botToken: 'Token',
-      botTokenPlaceholder: "From BotFather",
+      botTokenPlaceholder: 'From BotFather',
       validate: 'Verify',
       userId: 'User ID',
       userIdPlaceholder: 'Your Telegram user ID',
-      userIdHint: "Send any message to userinfobot to get it",
+      userIdHint: 'Send any message to userinfobot to get it',
       packName: 'Name',
       packNamePlaceholder: 'Letters, numbers, underscore',
       packTitle: 'Title',

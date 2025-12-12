@@ -3,18 +3,18 @@
 
 :root {
   /* WeUI 官方色彩规范 */
-  --weui-brand-color: #07C160;
-  --weui-brand-color-light: #95EC69;
-  --weui-brand-color-dark: #06AD56;
-  
+  --weui-brand-color: #07c160;
+  --weui-brand-color-light: #95ec69;
+  --weui-brand-color-dark: #06ad56;
+
   /* 背景色 */
-  --weui-bg-0: #EDEDED;
-  --weui-bg-1: #F7F7F7;
-  --weui-bg-2: #FFFFFF;
-  --weui-bg-3: #F7F7F7;
-  --weui-bg-4: #4C4C4C;
-  --weui-bg-5: #FFFFFF;
-  
+  --weui-bg-0: #ededed;
+  --weui-bg-1: #f7f7f7;
+  --weui-bg-2: #ffffff;
+  --weui-bg-3: #f7f7f7;
+  --weui-bg-4: #4c4c4c;
+  --weui-bg-5: #ffffff;
+
   /* 前景色 */
   --weui-fg-0: rgba(0, 0, 0, 0.9);
   --weui-fg-half: rgba(0, 0, 0, 0.9);
@@ -23,33 +23,33 @@
   --weui-fg-3: rgba(0, 0, 0, 0.1);
   --weui-fg-4: rgba(0, 0, 0, 0.15);
   --weui-fg-5: rgba(0, 0, 0, 0.05);
-  
+
   /* 功能色 */
-  --weui-red: #FA5151;
-  --weui-orange: #FA9D3B;
-  --weui-yellow: #FFC300;
-  --weui-green: #91D300;
-  --weui-light-green: #95EC69;
-  --weui-blue: #10AEFF;
-  --weui-indigo: #1485EE;
-  --weui-purple: #6467F0;
-  --weui-white: #FFFFFF;
-  --weui-link: #576B95;
-  --weui-text-green: #06AE56;
-  
+  --weui-red: #fa5151;
+  --weui-orange: #fa9d3b;
+  --weui-yellow: #ffc300;
+  --weui-green: #91d300;
+  --weui-light-green: #95ec69;
+  --weui-blue: #10aeff;
+  --weui-indigo: #1485ee;
+  --weui-purple: #6467f0;
+  --weui-white: #ffffff;
+  --weui-link: #576b95;
+  --weui-text-green: #06ae56;
+
   /* 分割线 */
   --weui-fg-divider: rgba(0, 0, 0, 0.1);
-  
+
   /* 间距规范 */
   --weui-cell-padding-h: 16px;
   --weui-cell-padding-v: 12px;
   --weui-cell-gap: 8px;
-  
+
   /* 圆角规范 */
   --weui-radius-sm: 8px;
   --weui-radius-md: 12px;
   --weui-radius-lg: 16px;
-  
+
   /* 字号规范 */
   --weui-font-size-xs: 10px;
   --weui-font-size-sm: 12px;
@@ -63,12 +63,12 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --weui-bg-0: #111111;
-    --weui-bg-1: #1E1E1E;
+    --weui-bg-1: #1e1e1e;
     --weui-bg-2: #191919;
     --weui-bg-3: #202020;
     --weui-bg-4: #404040;
-    --weui-bg-5: #2C2C2C;
-    
+    --weui-bg-5: #2c2c2c;
+
     --weui-fg-0: rgba(255, 255, 255, 0.8);
     --weui-fg-half: rgba(255, 255, 255, 0.6);
     --weui-fg-1: rgba(255, 255, 255, 0.5);
@@ -76,9 +76,9 @@
     --weui-fg-3: rgba(255, 255, 255, 0.1);
     --weui-fg-4: rgba(255, 255, 255, 0.15);
     --weui-fg-5: rgba(255, 255, 255, 0.05);
-    
+
     --weui-fg-divider: rgba(255, 255, 255, 0.1);
-    --weui-link: #7D90A9;
+    --weui-link: #7d90a9;
   }
 }
 
@@ -89,7 +89,9 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans SC', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans SC',
+    'Noto Sans CJK SC', 'WenQuanYi Micro Hei', sans-serif;
   background: var(--weui-bg-1);
   color: var(--weui-fg-0);
   min-height: 100vh;
@@ -252,7 +254,8 @@ textarea {
 }
 
 /* 卡片 */
-.card, .weui-card {
+.card,
+.weui-card {
   background: var(--weui-bg-2);
   margin: var(--weui-cell-gap);
   border-radius: var(--weui-radius-md);
@@ -450,7 +453,8 @@ textarea {
 }
 
 /* WeUI 按钮 */
-.btn, .weui-btn {
+.btn,
+.weui-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -466,36 +470,43 @@ textarea {
   text-decoration: none;
 }
 
-.btn:active, .weui-btn:active {
+.btn:active,
+.weui-btn:active {
   opacity: 0.7;
 }
 
-.btn-primary, .weui-btn_primary {
+.btn-primary,
+.weui-btn_primary {
   background: var(--weui-brand-color);
   color: var(--weui-white);
 }
 
-.btn-primary:hover:not(:disabled), .weui-btn_primary:hover:not(:disabled) {
+.btn-primary:hover:not(:disabled),
+.weui-btn_primary:hover:not(:disabled) {
   background: var(--weui-brand-color-dark);
 }
 
-.btn-primary:disabled, .weui-btn_primary:disabled {
+.btn-primary:disabled,
+.weui-btn_primary:disabled {
   background: var(--weui-fg-3);
   color: var(--weui-fg-2);
   cursor: not-allowed;
 }
 
-.btn-secondary, .weui-btn_default {
+.btn-secondary,
+.weui-btn_default {
   background: var(--weui-bg-3);
   color: var(--weui-fg-0);
   border: 1px solid var(--weui-fg-3);
 }
 
-.btn-secondary:hover, .weui-btn_default:hover {
+.btn-secondary:hover,
+.weui-btn_default:hover {
   background: var(--weui-bg-4);
 }
 
-.btn-warn, .weui-btn_warn {
+.btn-warn,
+.weui-btn_warn {
   background: var(--weui-red);
   color: var(--weui-white);
 }
@@ -841,7 +852,9 @@ textarea {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* 页脚 */
@@ -879,8 +892,12 @@ footer a:hover {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .preview-modal-content {
@@ -1492,7 +1509,7 @@ footer a:hover {
   cursor: pointer;
 }
 
-.checkbox-label input[type="checkbox"] {
+.checkbox-label input[type='checkbox'] {
   width: 18px;
   height: 18px;
   accent-color: var(--weui-brand-color);
@@ -1562,7 +1579,7 @@ footer a:hover {
   left: 4px;
 }
 
-.checkbox-overlay input[type="checkbox"] {
+.checkbox-overlay input[type='checkbox'] {
   width: 18px;
   height: 18px;
   accent-color: var(--weui-brand-color);
@@ -1657,7 +1674,7 @@ footer a:hover {
   .container {
     padding: 0;
   }
-  
+
   .card {
     margin: var(--weui-cell-gap);
     border-radius: var(--weui-radius-md);
@@ -1697,22 +1714,22 @@ footer a:hover {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .history-item {
     flex-wrap: wrap;
   }
-  
+
   .history-downloads {
     width: 100%;
     margin-top: 8px;
     justify-content: flex-start;
   }
-  
+
   .form-row {
     flex-direction: column;
     gap: 0;
   }
-  
+
   .file-grid {
     grid-template-columns: repeat(3, 1fr);
   }

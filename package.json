@@ -16,7 +16,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "cross-env NODE_ENV=production node server.js",
-    "clean": "node -e \"const fs=require('fs');const path=require('path');['uploads','output'].forEach(d=>{const dir=path.join(__dirname,d);if(fs.existsSync(dir)){fs.readdirSync(dir).forEach(f=>{const p=path.join(dir,f);if(f!=='.gitkeep')fs.unlinkSync(p)})}})\""
+    "clean": "node -e \"const fs=require('fs');const path=require('path');['uploads','output'].forEach(d=>{const dir=path.join(__dirname,d);if(fs.existsSync(dir)){fs.readdirSync(dir).forEach(f=>{const p=path.join(dir,f);if(f!=='.gitkeep')fs.unlinkSync(p)})}})\"",
+    "lint": "eslint . --fix",
+    "format": "prettier --write \"src/**/*.{js,vue,css}\" \"server/**/*.js\" \"*.js\""
   },
   "dependencies": {
     "archiver": "^7.0.1",
@@ -31,9 +33,14 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.17.0",
     "@vitejs/plugin-vue": "^6.0.2",
     "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-vue": "^9.32.0",
+    "prettier": "^3.4.2",
     "vite": "^7.2.6"
   }
 }

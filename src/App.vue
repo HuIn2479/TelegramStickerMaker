@@ -9,70 +9,42 @@
             <div class="weui-navigation-bar__subtitle">{{ t('header.subtitle') }}</div>
           </div>
           <div class="language-switcher">
-            <button 
-              class="lang-btn" 
-              :class="{ active: locale === 'zh' }"
-              @click="changeLanguage('zh')"
-            >
-              中文
-            </button>
-            <button 
-              class="lang-btn" 
-              :class="{ active: locale === 'en' }"
-              @click="changeLanguage('en')"
-            >
-              EN
-            </button>
+            <button class="lang-btn" :class="{ active: locale === 'zh' }" @click="changeLanguage('zh')">中文</button>
+            <button class="lang-btn" :class="{ active: locale === 'en' }" @click="changeLanguage('en')">EN</button>
           </div>
         </div>
       </div>
 
       <!-- WeUI Tabs -->
       <div class="weui-tabs">
-        <button 
-          class="weui-tab" 
-          :class="{ active: activeTab === 'static' }"
-          @click="activeTab = 'static'"
-        >
+        <button class="weui-tab" :class="{ active: activeTab === 'static' }" @click="activeTab = 'static'">
           {{ t('tabs.static') }}
         </button>
-        <button 
-          class="weui-tab" 
-          :class="{ active: activeTab === 'video' }"
-          @click="activeTab = 'video'"
-        >
+        <button class="weui-tab" :class="{ active: activeTab === 'video' }" @click="activeTab = 'video'">
           {{ t('tabs.video') }}
         </button>
-        <button 
-          class="weui-tab" 
-          :class="{ active: activeTab === 'history' }"
-          @click="activeTab = 'history'"
-        >
+        <button class="weui-tab" :class="{ active: activeTab === 'history' }" @click="activeTab = 'history'">
           {{ t('tabs.history') }}
         </button>
-        <button 
-          class="weui-tab" 
-          :class="{ active: activeTab === 'upload' }"
-          @click="activeTab = 'upload'"
-        >
+        <button class="weui-tab" :class="{ active: activeTab === 'upload' }" @click="activeTab = 'upload'">
           {{ t('tabs.upload') }}
         </button>
       </div>
 
       <!-- 内容面板 -->
-      <div class="weui-panel" v-show="activeTab === 'static'">
+      <div v-show="activeTab === 'static'" class="weui-panel">
         <StaticStickerPanel @converted="handleConverted" />
       </div>
 
-      <div class="weui-panel" v-show="activeTab === 'video'">
+      <div v-show="activeTab === 'video'" class="weui-panel">
         <VideoStickerPanel @converted="handleConverted" />
       </div>
 
-      <div class="weui-panel" v-show="activeTab === 'history'">
+      <div v-show="activeTab === 'history'" class="weui-panel">
         <HistoryPanel ref="historyRef" />
       </div>
 
-      <div class="weui-panel" v-show="activeTab === 'upload'">
+      <div v-show="activeTab === 'upload'" class="weui-panel">
         <TelegramUploadPanel />
       </div>
 
@@ -80,7 +52,8 @@
 
       <footer>
         <p>
-          {{ t('footer.text') }} <a href="https://core.telegram.org/stickers" target="_blank">{{ t('footer.link') }}</a>
+          {{ t('footer.text') }}
+          <a href="https://core.telegram.org/stickers" target="_blank">{{ t('footer.link') }}</a>
         </p>
       </footer>
     </div>
@@ -115,7 +88,7 @@ onBeforeUnmount(() => {
   disconnect()
 })
 
-const changeLanguage = (lang) => {
+const changeLanguage = lang => {
   locale.value = lang
   localStorage.setItem('language', lang)
 }

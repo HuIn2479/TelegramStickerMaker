@@ -33,7 +33,7 @@ if (config.env === 'development') {
     res.header('Access-Control-Allow-Headers', 'Content-Type')
     res.header('Access-Control-Allow-Credentials', 'true')
     res.header('Content-Type', 'application/json; charset=utf-8')
-    
+
     if (req.method === 'OPTIONS') {
       return res.sendStatus(200)
     }
@@ -71,13 +71,9 @@ server.listen(config.port, () => {
   logger.info(`📁 Upload directory: ${config.paths.uploads}`)
   logger.info(`📁 Output directory: ${config.paths.output}`)
   logger.info(`🌍 Environment: ${config.env}`)
-  
+
   // 启动文件清理任务
-  startCleanupSchedule(
-    [config.paths.uploads, config.paths.output],
-    config.cleanup.maxAge,
-    config.cleanup.interval
-  )
+  startCleanupSchedule([config.paths.uploads, config.paths.output], config.cleanup.maxAge, config.cleanup.interval)
 })
 
 // 优雅关闭

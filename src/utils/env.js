@@ -18,8 +18,7 @@ export function getApiBaseUrl() {
  * 检测是否在 GitHub Pages 环境
  */
 export function isGitHubPages() {
-  return window.location.hostname.includes('github.io') || 
-         window.location.hostname.includes('github.com')
+  return window.location.hostname.includes('github.io') || window.location.hostname.includes('github.com')
 }
 
 /**
@@ -27,9 +26,9 @@ export function isGitHubPages() {
  */
 export async function isAPIAvailable() {
   try {
-    const response = await fetch('/api/health', { 
+    const response = await fetch('/api/health', {
       method: 'GET',
-      timeout: 3000 
+      timeout: 3000
     })
     return response.ok
   } catch {

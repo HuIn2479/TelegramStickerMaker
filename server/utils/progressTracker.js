@@ -18,7 +18,7 @@ export class ProgressTracker {
   update(step, message = '') {
     this.currentStep = step
     const percentage = Math.min(Math.round((step / this.totalSteps) * 100), 100)
-    
+
     this.wsManager.broadcastProgress(this.taskId, {
       percentage,
       step,

@@ -16,7 +16,7 @@ router.post('/convert-image', upload.single('image'), handleUploadError, async (
 
     const taskId = req.body.taskId || null
     const result = await imageService.convertToSticker(req.file.path, req.file.originalname, taskId)
-    
+
     res.json({
       success: true,
       taskId,
