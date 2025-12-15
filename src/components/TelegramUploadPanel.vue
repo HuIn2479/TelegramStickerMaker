@@ -897,7 +897,8 @@ onUnmounted(() => {
 }
 
 .token-icon-btn:hover {
-  background: var(--weui-bg-4);
+  background: rgba(7, 193, 96, 0.08);
+  border-color: rgba(7, 193, 96, 0.3);
 }
 
 .token-icon-btn svg {
@@ -994,7 +995,8 @@ onUnmounted(() => {
 }
 
 .emoji-selector:hover {
-  background: var(--weui-bg-4);
+  background: rgba(7, 193, 96, 0.08);
+  border: 1px solid rgba(7, 193, 96, 0.2);
 }
 
 .emoji-preview__icon {
@@ -1047,7 +1049,7 @@ onUnmounted(() => {
 }
 
 .emoji-item:hover {
-  background: var(--weui-bg-2);
+  background: rgba(7, 193, 96, 0.1);
   transform: scale(1.2);
 }
 
@@ -1065,25 +1067,43 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
-  background: var(--weui-bg-3);
+  padding: 12px 14px;
+  background: transparent;
+  border: 1px solid var(--weui-fg-divider);
   border-radius: var(--weui-radius-md);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  transition: all 0.2s ease;
+}
+
+.files-toolbar:hover {
+  border-color: rgba(7, 193, 96, 0.3);
+  background: rgba(7, 193, 96, 0.02);
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
-  font-size: var(--weui-font-size-sm);
+  font-size: var(--weui-font-size-md);
   color: var(--weui-fg-0);
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: var(--weui-radius-sm);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.checkbox-label:hover {
+  background: rgba(7, 193, 96, 0.06);
 }
 
 .checkbox {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   accent-color: var(--weui-brand-color);
+  cursor: pointer;
+  border-radius: 4px;
 }
 
 .loading-state {
@@ -1282,8 +1302,11 @@ onUnmounted(() => {
 
 .expand-indicator {
   margin-left: auto;
-  font-size: var(--weui-font-size-sm);
-  color: var(--weui-fg-2);
+  font-size: var(--weui-font-size-md);
+  color: var(--weui-brand-color);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  user-select: none;
 }
 
 .help-content {

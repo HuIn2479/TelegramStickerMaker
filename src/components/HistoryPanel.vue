@@ -230,7 +230,8 @@ defineExpose({
 }
 
 .history-item:hover {
-  background: var(--weui-bg-4);
+  background: rgba(100, 103, 240, 0.08);
+  box-shadow: 0 0 0 1px rgba(100, 103, 240, 0.15);
 }
 
 .history-preview {

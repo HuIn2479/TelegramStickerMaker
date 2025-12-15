@@ -23,11 +23,11 @@
         <button class="weui-tab" :class="{ active: activeTab === 'video' }" @click="activeTab = 'video'">
           {{ t('tabs.video') }}
         </button>
-        <button class="weui-tab" :class="{ active: activeTab === 'history' }" @click="activeTab = 'history'">
-          {{ t('tabs.history') }}
-        </button>
         <button class="weui-tab" :class="{ active: activeTab === 'upload' }" @click="activeTab = 'upload'">
           {{ t('tabs.upload') }}
+        </button>
+        <button class="weui-tab" :class="{ active: activeTab === 'history' }" @click="activeTab = 'history'">
+          {{ t('tabs.history') }}
         </button>
       </div>
 
@@ -40,12 +40,12 @@
         <VideoStickerPanel @converted="handleConverted" />
       </div>
 
-      <div v-show="activeTab === 'history'" class="weui-panel">
-        <HistoryPanel ref="historyRef" />
-      </div>
-
       <div v-show="activeTab === 'upload'" class="weui-panel">
         <TelegramUploadPanel />
+      </div>
+
+      <div v-show="activeTab === 'history'" class="weui-panel">
+        <HistoryPanel ref="historyRef" />
       </div>
 
       <PreviewModal />
@@ -65,8 +65,8 @@ import { ref, onMounted, onBeforeUnmount, provide } from 'vue'
 import { useI18n } from 'vue-i18n'
 import StaticStickerPanel from './components/StaticStickerPanel.vue'
 import VideoStickerPanel from './components/VideoStickerPanel.vue'
-import HistoryPanel from './components/HistoryPanel.vue'
 import TelegramUploadPanel from './components/TelegramUploadPanel.vue'
+import HistoryPanel from './components/HistoryPanel.vue'
 import PreviewModal from './components/PreviewModal.vue'
 import { useWebSocket } from './composables/useWebSocket'
 
