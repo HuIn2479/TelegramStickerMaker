@@ -14,7 +14,7 @@
 
 ## 快速开始
 
-**环境要求**: Node.js 18+ 、 FFmpeg
+**环境要求**: Node.js 20+ 、 FFmpeg
 
 ```bash
 # 安装依赖
@@ -26,19 +26,6 @@ npm run dev      # 前端 :5173 / 后端 :3000
 # 生产部署
 npm run build && npm start   # 访问 :3000
 ```
-
-## 配置
-
-复制 `.env.example` 为 `.env`，主要配置项：
-
-| 变量 | 默认值 | 说明 |
-|------|--------|------|
-| `PORT` | `3000` | 服务端口 |
-| `MAX_FILE_SIZE` | `52428800` | 文件大小限制 (50MB) |
-| `MAX_IMAGE_FILES` | `20` | 图片数量限制 |
-| `MAX_VIDEO_FILES` | `10` | 视频数量限制 |
-
-前端配置使用 `VITE_` 前缀，如 `VITE_MAX_IMAGE_FILES`。
 
 ## API
 
