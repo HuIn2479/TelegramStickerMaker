@@ -1,5 +1,8 @@
 # Telegram Sticker Maker
 
+> [!NOTE]
+> 项目只在 Windows 下测试通过，Linux 和 macOS用户请自行测试
+
 将图片或视频转换为 Telegram 贴纸格式
 
 [![Vue 3](https://img.shields.io/badge/Vue-3.5.26-4FC08D?logo=vue.js)](https://vuejs.org/)
@@ -38,10 +41,16 @@ npm run build && npm start   # 访问 :3000
 
 ## 技术栈
 
-- **前端**: Vue 3 + Vite + Vue I18n
-- **后端**: Express + Sharp + FFmpeg
-- **通信**: WebSocket 实时进度
+- **前端框架**: Vue 3.5.26 + Vite 7.3.0
+- **UI 组件**: WeUI 2.6.25
+- **国际化**: Vue I18n 11.2.8
+- **后端服务**: Node.js 20+ + Express 5.2.1
+- **图片处理**: Sharp 0.34.5
+- **视频处理**: FFmpeg (fluent-ffmpeg 2.1.2)
+- **文件上传**: Multer 2.0.2
+- **实时通信**: WebSocket (ws 8.19.0)
+- **文件存储**: 操作系统临时目录（自动清理）
 
 ## 许可证
 
-[MIT](./LICENSE) | 基于 [Telegram Sticker 规范](https://core.telegram.org/stickers)
+[MIT](./LICENSE) | 基于 [Telegram Sticker](https://core.telegram.org/stickers) 规范
