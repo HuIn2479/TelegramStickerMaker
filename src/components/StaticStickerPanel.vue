@@ -86,9 +86,10 @@ import { useI18n } from 'vue-i18n'
 import UploadZone from './UploadZone.vue'
 import BatchItem from './BatchItem.vue'
 import { generateId, downloadFile, saveToHistory } from '@/utils/helpers'
-import { getUploadLimits } from '@/utils/env'
+import { getApiBaseUrl, getUploadLimits } from '@/utils/env'
 
 const { t } = useI18n()
+const API_BASE = getApiBaseUrl()
 
 const emit = defineEmits(['converted'])
 
@@ -191,13 +192,13 @@ const convertSingle = async taskId => {
           id: task.id,
           type: 'image',
           fileName: task.name.replace(/\.[^.]+$/, ''),
-          preview: task.result.png.url, // 使用服务器 URL 而不是 blob URL
+          preview: `${API_BASE}/api/telegram/file/${task.result.png.filename}`,
           width: task.width,
           height: task.height,
           size: task.file.size,
           result: {
-            png: task.result.png.url,
-            webp: task.result.webp.url
+            png: `${API_BASE}/api/telegram/file/${task.result.png.filename}`,
+            webp: `${API_BASE}/api/telegram/file/${task.result.webp.filename}`
           }
         })
       }
@@ -217,7 +218,7 @@ const convertSingle = async taskId => {
     formData.append('image', task.file)
     formData.append('taskId', taskId)
 
-    const response = await fetch('/api/convert-image', {
+    const response = await fetch(`${API_BASE}/api/convert-image`, {
       method: 'POST',
       body: formData
     })
@@ -237,13 +238,13 @@ const convertSingle = async taskId => {
         id: task.id,
         type: 'image',
         fileName: task.name.replace(/\.[^.]+$/, ''),
-        preview: task.result.png.url, // 使用服务器 URL 而不是 blob URL
+        preview: `${API_BASE}/api/telegram/file/${task.result.png.filename}`,
         width: task.width,
         height: task.height,
         size: task.file.size,
         result: {
-          png: task.result.png.url,
-          webp: task.result.webp.url
+          png: `${API_BASE}/api/telegram/file/${task.result.png.filename}`,
+          webp: `${API_BASE}/api/telegram/file/${task.result.webp.filename}`
         }
       })
 
@@ -270,7 +271,8 @@ const downloadResult = ({ id, format }) => {
   if (!task || !task.result) return
 
   const baseName = task.name.replace(/\.[^.]+$/, '')
-  downloadFile(task.result[format].url, `${baseName}.${format}`)
+  const fileUrl = `${API_BASE}/api/telegram/file/${task.result[format].filename}`
+  downloadFile(fileUrl, `${baseName}.${format}`)
 }
 
 const downloadAll = async format => {

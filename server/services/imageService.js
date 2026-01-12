@@ -32,8 +32,8 @@ export class ImageService {
       const timestamp = Date.now()
       const baseName = path.basename(originalFilename, path.extname(originalFilename))
       const outputFilename = `${baseName}-${timestamp}`
-      const pngPath = path.join(config.paths.output, `${outputFilename}.png`)
-      const webpPath = path.join(config.paths.output, `${outputFilename}.webp`)
+      const pngPath = path.join(config.paths.temp, `${outputFilename}.png`)
+      const webpPath = path.join(config.paths.temp, `${outputFilename}.webp`)
 
       tracker?.update(3, '转换为 PNG 格式...')
 
@@ -71,11 +71,13 @@ export class ImageService {
           width: newWidth,
           height: newHeight,
           png: {
-            url: `/output/${outputFilename}.png`,
+            filename: `${outputFilename}.png`,
+            path: pngPath,
             size: pngStats.size
           },
           webp: {
-            url: `/output/${outputFilename}.webp`,
+            filename: `${outputFilename}.webp`,
+            path: webpPath,
             size: webpStats.size
           }
         }

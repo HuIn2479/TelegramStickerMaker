@@ -120,32 +120,23 @@
         <!-- 默认表情 -->
         <div class="form-item">
           <label class="form-label">{{ t('telegram.config.emoji') }}</label>
-          <div class="emoji-selector" @click="showEmojiPicker = !showEmojiPicker">
-            <span class="emoji-preview__icon">{{ defaultEmoji }}</span>
-            <span class="emoji-preview__hint">点击更换</span>
-            <svg
-              class="emoji-arrow"
-              :class="{ 'emoji-arrow_up': showEmojiPicker }"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
-            </svg>
+          <div class="emoji-input-wrapper" :class="{ 'emoji-input-wrapper_error': !!emojiError }">
+            <input
+              v-model="defaultEmoji"
+              class="emoji-input"
+              type="text"
+              inputmode="text"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="输入 Emoji"
+              @input="handleEmojiInput"
+              @blur="handleEmojiBlur"
+            />
+            <span class="emoji-preview" aria-hidden="true">{{ defaultEmoji }}</span>
+            <button class="emoji-reset" type="button" title="重置为默认" @click="resetEmoji">↺</button>
           </div>
-          <!-- Emoji 选择器 -->
-          <div v-if="showEmojiPicker" class="emoji-picker">
-            <div class="emoji-grid">
-              <button
-                v-for="emoji in emojiList"
-                :key="emoji"
-                class="emoji-item"
-                :class="{ 'emoji-item_selected': defaultEmoji === emoji }"
-                @click="selectEmoji(emoji)"
-              >
-                {{ emoji }}
-              </button>
-            </div>
-          </div>
+          <p v-if="emojiError" class="emoji-error">{{ emojiError }}</p>
+          <p class="emoji-hint">仅支持单个 Emoji（Windows 可用 Win + . 打开表情面板）</p>
         </div>
       </div>
     </div>
@@ -207,10 +198,10 @@
           @click="toggleSelect(file.name)"
         >
           <div class="file-preview">
-            <img v-if="file.type === 'static'" :src="`/output/${file.name}`" :alt="file.name" />
+            <img v-if="file.type === 'static'" :src="getFileUrl(file.name)" :alt="file.name" />
             <video
               v-else
-              :src="`/output/${file.name}`"
+              :src="getFileUrl(file.name)"
               muted
               loop
               @mouseenter="$event.target.play()"
@@ -359,227 +350,36 @@ const validating = ref(false)
 const botInfo = ref(null)
 const tokenError = ref('')
 const showHelp = ref(false)
-const showEmojiPicker = ref(false)
+const emojiError = ref('')
+const lastValidEmoji = ref(defaultEmoji.value)
 
-// Emoji 列表
-const emojiList = [
-  // 表情
-  '😀',
-  '😃',
-  '😄',
-  '😁',
-  '😆',
-  '😅',
-  '🤣',
-  '😂',
-  '🙂',
-  '😊',
-  '😇',
-  '🥰',
-  '😍',
-  '🤩',
-  '😘',
-  '😗',
-  '😚',
-  '😋',
-  '😛',
-  '😜',
-  '🤪',
-  '😝',
-  '🤗',
-  '🤭',
-  '🤫',
-  '🤔',
-  '🤐',
-  '🤨',
-  '😐',
-  '😑',
-  '😶',
-  '😏',
-  '😒',
-  '🙄',
-  '😬',
-  '😮',
-  '😯',
-  '😲',
-  '😳',
-  '🥺',
-  '😦',
-  '😧',
-  '😨',
-  '😰',
-  '😥',
-  '😢',
-  '😭',
-  '😱',
-  '😖',
-  '😣',
-  '😞',
-  '😓',
-  '😩',
-  '😫',
-  '🥱',
-  '😤',
-  '😡',
-  '😠',
-  '🤬',
-  '😈',
-  '👿',
-  '💀',
-  '☠️',
-  '💩',
-  '🤡',
-  '👹',
-  '👺',
-  '👻',
-  '👽',
-  '👾',
-  '🤖',
-  '😺',
-  '😸',
-  '😹',
-  '😻',
-  '😼',
-  '😽',
-  '🙀',
-  '😿',
-  '😾',
-  // 手势
-  '👋',
-  '🤚',
-  '🖐️',
-  '✋',
-  '🖖',
-  '👌',
-  '🤌',
-  '🤏',
-  '✌️',
-  '🤞',
-  '🤟',
-  '🤘',
-  '🤙',
-  '👈',
-  '👉',
-  '👆',
-  '🖕',
-  '👇',
-  '☝️',
-  '👍',
-  '👎',
-  '✊',
-  '👊',
-  '🤛',
-  '🤜',
-  '👏',
-  '🙌',
-  '👐',
-  '🤲',
-  '🤝',
-  '🙏',
-  '✍️',
-  '💅',
-  '🤳',
-  '💪',
-  '🦾',
-  '🦿',
-  '🦵',
-  '🦶',
-  '👂',
-  // 爱心
-  '❤️',
-  '🧡',
-  '💛',
-  '💚',
-  '💙',
-  '💜',
-  '🖤',
-  '🤍',
-  '🤎',
-  '💔',
-  '❣️',
-  '💕',
-  '💞',
-  '💓',
-  '💗',
-  '💖',
-  '💘',
-  '💝',
-  '💟',
-  '♥️',
-  // 动物
-  '🐶',
-  '🐱',
-  '🐭',
-  '🐹',
-  '🐰',
-  '🦊',
-  '🐻',
-  '🐼',
-  '🐨',
-  '🐯',
-  '🦁',
-  '🐮',
-  '🐷',
-  '🐸',
-  '🐵',
-  '🐔',
-  '🐧',
-  '🐦',
-  '🐤',
-  '🦆',
-  '🦅',
-  '🦉',
-  '🦇',
-  '🐺',
-  '🐗',
-  '🐴',
-  '🦄',
-  '🐝',
-  '🐛',
-  '🦋',
-  // 食物
-  '🍎',
-  '🍐',
-  '🍊',
-  '🍋',
-  '🍌',
-  '🍉',
-  '🍇',
-  '🍓',
-  '🫐',
-  '🍈',
-  '🍒',
-  '🍑',
-  '🥭',
-  '🍍',
-  '🥥',
-  '🥝',
-  '🍅',
-  '🍆',
-  '🥑',
-  '🥦',
-  // 物品
-  '⭐',
-  '🌟',
-  '✨',
-  '💫',
-  '🔥',
-  '💥',
-  '💢',
-  '💦',
-  '💨',
-  '🕳️',
-  '💣',
-  '💬',
-  '👁️‍🗨️',
-  '🗨️',
-  '🗯️',
-  '💭',
-  '💤',
-  '🎉',
-  '🎊',
-  '🎈'
-]
+// Emoji 验证函数
+const getFirstGrapheme = value => {
+  const text = String(value ?? '').trim()
+  if (!text) return ''
+
+  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+    const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' })
+    const iterator = segmenter.segment(text)[Symbol.iterator]()
+    const first = iterator.next().value
+    return first?.segment || ''
+  }
+
+  // fallback：对复杂 ZWJ emoji 可能不完美，但至少能截断输入
+  return Array.from(text)[0] || ''
+}
+
+const isValidEmoji = value => {
+  const str = String(value ?? '').trim()
+  if (!str) return false
+
+  // 至少包含一个“扩展象形文字”字符，避免把普通符号当成 emoji
+  if (!/\p{Extended_Pictographic}/u.test(str)) return false
+
+  // 允许 ZWJ/变体选择符/修饰符/多码点组合
+  const emojiRegex = /^(?:\p{Extended_Pictographic}|\p{Emoji_Presentation})(?:\uFE0F|\u200D|\p{Emoji_Modifier}|\p{Extended_Pictographic})*$/u
+  return emojiRegex.test(str)
+}
 
 // 文件状态
 const outputFiles = ref([])
@@ -617,6 +417,7 @@ const loadConfig = () => {
       packName.value = config.packName || ''
       packTitle.value = config.packTitle || ''
       defaultEmoji.value = config.emoji || '😊'
+      lastValidEmoji.value = defaultEmoji.value
     } catch {}
   }
 }
@@ -632,9 +433,52 @@ const saveConfig = () => {
   localStorage.setItem('telegram_config', JSON.stringify(config))
 }
 
-const selectEmoji = emoji => {
-  defaultEmoji.value = emoji
-  showEmojiPicker.value = false
+const handleEmojiInput = event => {
+  const raw = event?.target?.value ?? ''
+  const first = getFirstGrapheme(raw)
+
+  // 空值允许输入过程存在，失焦时回退
+  if (!String(raw).trim()) {
+    emojiError.value = ''
+    return
+  }
+
+  // 始终压缩为“一个 emoji”
+  if (first && defaultEmoji.value !== first) {
+    defaultEmoji.value = first
+  }
+
+  if (first && isValidEmoji(first)) {
+    emojiError.value = ''
+    lastValidEmoji.value = first
+    return
+  }
+
+  emojiError.value = '仅支持单个 Emoji'
+  defaultEmoji.value = lastValidEmoji.value || '😊'
+}
+
+const handleEmojiBlur = () => {
+  const first = getFirstGrapheme(defaultEmoji.value)
+
+  if (first && isValidEmoji(first)) {
+    defaultEmoji.value = first
+    lastValidEmoji.value = first
+    emojiError.value = ''
+    saveConfig()
+    return
+  }
+
+  // 空或非法：回退到最后一次有效值
+  defaultEmoji.value = lastValidEmoji.value || '😊'
+  emojiError.value = ''
+  saveConfig()
+}
+
+const resetEmoji = () => {
+  defaultEmoji.value = '😊'
+  lastValidEmoji.value = '😊'
+  emojiError.value = ''
   saveConfig()
 }
 
@@ -679,6 +523,10 @@ const loadOutputFiles = async () => {
   } finally {
     loadingFiles.value = false
   }
+}
+
+const getFileUrl = fileName => {
+  return `${API_BASE}/api/telegram/file/${encodeURIComponent(fileName)}`
 }
 
 const isSelected = fileName => {
@@ -982,80 +830,113 @@ onUnmounted(() => {
   color: var(--weui-red);
 }
 
-/* ===== Emoji 选择器 ===== */
-.emoji-selector {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  background: var(--weui-bg-3);
-  border-radius: var(--weui-radius-md);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.emoji-selector:hover {
-  background: rgba(7, 193, 96, 0.08);
-  border: 1px solid rgba(7, 193, 96, 0.2);
-}
-
-.emoji-preview__icon {
-  font-size: 24px;
-}
-
-.emoji-preview__hint {
-  flex: 1;
-  font-size: var(--weui-font-size-sm);
-  color: var(--weui-fg-2);
-}
-
-.emoji-arrow {
-  width: 20px;
-  height: 20px;
-  color: var(--weui-fg-2);
-  transition: transform 0.2s;
-}
-
-.emoji-arrow_up {
-  transform: rotate(180deg);
-}
-
-.emoji-picker {
-  margin-top: 8px;
-  background: var(--weui-bg-3);
-  border-radius: var(--weui-radius-md);
-  padding: 12px;
-}
-
-.emoji-grid {
+/* ===== Emoji 输入框 ===== */
+.emoji-input-wrapper {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 4px;
-  max-height: 200px;
-  overflow-y: auto;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--weui-bg-3);
+  border: 1px solid var(--weui-fg-divider);
+  border-radius: var(--weui-radius-md);
+  transition: all 0.2s ease;
 }
 
-.emoji-item {
-  display: flex;
+.emoji-input-wrapper:hover {
+  border-color: rgba(7, 193, 96, 0.25);
+}
+
+.emoji-input-wrapper:focus-within {
+  border-color: var(--weui-brand-color);
+  background: var(--weui-bg-2);
+  box-shadow: 0 0 0 3px rgba(7, 193, 96, 0.12);
+}
+
+.emoji-input-wrapper_error {
+  border-color: rgba(250, 81, 81, 0.55);
+  box-shadow: 0 0 0 3px rgba(250, 81, 81, 0.12);
+}
+
+.emoji-input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  border: none;
+  border-radius: calc(var(--weui-radius-md) - 4px);
+  background: transparent;
+  font-size: 22px;
+  color: var(--weui-fg-0);
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-align: center;
+  caret-color: var(--weui-brand-color);
+}
+
+.emoji-input:focus {
+  outline: none;
+}
+
+.emoji-input::placeholder {
+  color: var(--weui-fg-2);
+}
+
+.emoji-preview {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 1;
+  border-radius: 12px;
+  background: rgba(7, 193, 96, 0.06);
+  border: 1px solid rgba(7, 193, 96, 0.18);
   font-size: 22px;
-  background: transparent;
-  border: none;
-  border-radius: var(--weui-radius-md);
+  line-height: 1;
+  user-select: none;
+}
+
+.emoji-reset {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--weui-fg-divider);
+  background: var(--weui-bg-2);
+  color: var(--weui-fg-1);
   cursor: pointer;
-  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
-.emoji-item:hover {
-  background: rgba(7, 193, 96, 0.1);
-  transform: scale(1.2);
+.emoji-reset:hover {
+  border-color: rgba(7, 193, 96, 0.35);
+  background: rgba(7, 193, 96, 0.06);
+  color: var(--weui-brand-color);
 }
 
-.emoji-item_selected {
-  background: rgba(7, 193, 96, 0.15);
-  box-shadow: inset 0 0 0 2px var(--weui-brand-color);
+.emoji-reset:active {
+  transform: scale(0.98);
+}
+
+.emoji-error {
+  margin: 6px 0 0;
+  font-size: var(--weui-font-size-xs);
+  color: var(--weui-red);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.emoji-error::before {
+  content: '⚠️';
+  font-size: 12px;
+}
+
+.emoji-hint {
+  margin: 6px 0 0;
+  font-size: var(--weui-font-size-xs);
+  color: var(--weui-fg-2);
 }
 
 /* ===== 文件选择卡片 ===== */
@@ -1358,10 +1239,6 @@ onUnmounted(() => {
 @media (max-width: 640px) {
   .file-grid {
     grid-template-columns: repeat(3, 1fr);
-  }
-
-  .emoji-grid {
-    grid-template-columns: repeat(6, 1fr);
   }
 }
 </style>

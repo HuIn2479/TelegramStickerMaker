@@ -45,7 +45,6 @@ if (config.env === 'development') {
 if (config.env === 'production') {
   app.use(express.static(config.paths.dist))
 }
-app.use('/output', express.static(config.paths.output))
 
 // API 路由
 app.use('/api', routes)
@@ -68,12 +67,14 @@ wsManager.initialize(server)
 server.listen(config.port, () => {
   logger.success(`🚀 Server running on http://localhost:${config.port}`)
   logger.success(`🔌 WebSocket server running on ws://localhost:${config.port}/ws`)
-  logger.info(`📁 Upload directory: ${config.paths.uploads}`)
-  logger.info(`📁 Output directory: ${config.paths.output}`)
+  logger.info(`📁 Temp directory: ${config.paths.temp}`)
   logger.info(`🌍 Environment: ${config.env}`)
 
-  // 启动文件清理任务
-  startCleanupSchedule([config.paths.uploads, config.paths.output], config.cleanup.maxAge, config.cleanup.interval)
+  // 启动时清理临时目录中的过期文件
+  if (config.temp.cleanupOnStartup) {
+    startCleanupSchedule([config.paths.temp], config.temp.maxAge, config.temp.maxAge)
+    logger.info(`✅ Temp file cleanup enabled (max age: ${config.temp.maxAge / 1000 / 60} minutes)`)
+  }
 })
 
 // 优雅关闭

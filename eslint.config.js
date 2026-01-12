@@ -4,7 +4,7 @@ import prettierConfig from 'eslint-config-prettier'
 
 export default [
   {
-    ignores: ['dist/**', 'node_modules/**', 'output/**', 'uploads/**']
+    ignores: ['dist/**', 'node_modules/**']
   },
   js.configs.recommended,
   ...pluginVue.configs['flat/recommended'],

@@ -1,6 +1,16 @@
 import multer from 'multer'
 import path from 'path'
+import fs from 'fs'
 import config from '../config/index.js'
+
+/**
+ * 确保临时目录存在
+ */
+function ensureTempDir() {
+  if (!fs.existsSync(config.paths.temp)) {
+    fs.mkdirSync(config.paths.temp, { recursive: true })
+  }
+}
 
 /**
  * 修复文件名编码（ISO-8859-1 转 UTF-8）
@@ -17,18 +27,24 @@ function fixFilenameEncoding(filename) {
 }
 
 /**
- * Multer 存储配置
+ * Multer 内存存储配置 - 小文件直接在内存中处理
  */
-const storage = multer.diskStorage({
+const memoryStorage = multer.memoryStorage()
+
+/**
+ * Multer 磁盘存储配置 - 用于大文件
+ */
+const diskStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, config.paths.uploads)
+    ensureTempDir()
+    cb(null, config.paths.temp)
   },
   filename: (req, file, cb) => {
     // 修复原始文件名编码
     file.originalname = fixFilenameEncoding(file.originalname)
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`
     const ext = path.extname(file.originalname)
-    cb(null, `${uniqueSuffix}${ext}`)
+    cb(null, `upload-${uniqueSuffix}${ext}`)
   }
 })
 
@@ -44,10 +60,21 @@ const fileFilter = (req, file, cb) => {
 }
 
 /**
- * Multer 上传中间件
+ * Multer 上传中间件（使用磁盘存储）
  */
 export const upload = multer({
-  storage,
+  storage: diskStorage,
+  fileFilter,
+  limits: {
+    fileSize: config.upload.maxFileSize
+  }
+})
+
+/**
+ * Multer 内存上传中间件（用于小文件快速处理）
+ */
+export const uploadMemory = multer({
+  storage: memoryStorage,
   fileFilter,
   limits: {
     fileSize: config.upload.maxFileSize

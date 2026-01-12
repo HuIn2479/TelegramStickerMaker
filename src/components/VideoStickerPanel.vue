@@ -97,10 +97,12 @@ import { useI18n } from 'vue-i18n'
 import UploadZone from './UploadZone.vue'
 import BatchItem from './BatchItem.vue'
 import { generateId, downloadFile, saveToHistory } from '@/utils/helpers'
+import { getApiBaseUrl } from '@/utils/env'
 import { usePreviewModal } from '@/composables/usePreviewModal'
 import { getUploadLimits } from '@/utils/env'
 
 const { t } = useI18n()
+const API_BASE = getApiBaseUrl()
 
 const emit = defineEmits(['converted'])
 const tasks = ref([])
@@ -258,16 +260,16 @@ const convertSingle = async taskId => {
       task.progress = { percentage: 100, message: t('status.completed') }
 
       // 保存到历史记录
-      if (task.result && task.result.url) {
+      if (task.result && task.result.filename) {
         saveToHistory({
           id: task.id,
           type: 'video',
           fileName: task.name.replace(/\.[^.]+$/, ''),
-          preview: task.result.url, // 使用服务器 URL 而不是 blob URL
+          preview: `${API_BASE}/api/telegram/file/${task.result.filename}`,
           duration: task.duration,
           size: task.file.size,
           result: {
-            webm: task.result.url
+            webm: `${API_BASE}/api/telegram/file/${task.result.filename}`
           }
         })
       }
@@ -309,11 +311,11 @@ const convertSingle = async taskId => {
         id: task.id,
         type: 'video',
         fileName: task.name.replace(/\.[^.]+$/, ''),
-        preview: task.result.url, // 使用服务器 URL 而不是 blob URL
+        preview: `${API_BASE}/api/telegram/file/${task.result.filename}`,
         duration: task.duration,
         size: task.file.size,
         result: {
-          webm: task.result.url
+          webm: `${API_BASE}/api/telegram/file/${task.result.filename}`
         }
       })
 
@@ -340,11 +342,12 @@ const downloadResult = ({ id }) => {
   if (!task || !task.result) return
 
   const baseName = task.name.replace(/\.[^.]+$/, '')
-  downloadFile(task.result.url, `${baseName}.webm`)
+  const fileUrl = `${API_BASE}/api/telegram/file/${task.result.filename}`
+  downloadFile(fileUrl, `${baseName}.webm`)
 }
 
 const downloadAll = async () => {
-  const completedTasks = tasks.value.filter(t => t.status === 'done' && t.result && t.result.url)
+  const completedTasks = tasks.value.filter(t => t.status === 'done' && t.result && t.result.filename)
 
   if (completedTasks.length === 0) {
     return
@@ -356,14 +359,14 @@ const downloadAll = async () => {
       .map(task => {
         const baseName = task.name.replace(/\.[^.]+$/, '')
         return {
-          url: task.result.url,
+          url: `${API_BASE}/api/telegram/file/${task.result.filename}`,
           name: `${baseName}.webm`
         }
       })
       .filter(file => file.url) // 过滤掉没有 url 的文件
 
     // 调用后端打包下载 API
-    const response = await fetch('/api/download-batch', {
+    const response = await fetch(`${API_BASE}/api/download-batch`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

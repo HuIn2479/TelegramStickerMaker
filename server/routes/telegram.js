@@ -107,11 +107,11 @@ router.post('/telegram/upload', async (req, res) => {
     }
 
     // 验证文件存在
-    const outputDir = config.paths.output
+    const tempDir = config.paths.temp
     const validFiles = []
 
     for (const file of files) {
-      const filePath = path.join(outputDir, file)
+      const filePath = path.join(tempDir, file)
       if (fs.existsSync(filePath)) {
         const ext = path.extname(file).toLowerCase()
         if (ext === '.webp' || ext === '.webm') {
@@ -186,24 +186,24 @@ router.post('/telegram/upload', async (req, res) => {
 
 /**
  * GET /api/telegram/output-files
- * 获取 output 目录中的贴纸文件列表
+ * 获取临时目录中的贴纸文件列表
  */
 router.get('/telegram/output-files', (req, res) => {
   try {
-    const outputDir = config.paths.output
+    const tempDir = config.paths.temp
 
-    if (!fs.existsSync(outputDir)) {
+    if (!fs.existsSync(tempDir)) {
       return res.json({ files: [] })
     }
 
     const files = fs
-      .readdirSync(outputDir)
+      .readdirSync(tempDir)
       .filter(file => {
         const ext = path.extname(file).toLowerCase()
-        return ext === '.webp' || ext === '.webm'
+        return ext === '.webp' || ext === '.webm' || ext === '.png'
       })
       .map(file => {
-        const filePath = path.join(outputDir, file)
+        const filePath = path.join(tempDir, file)
         const stats = fs.statSync(filePath)
         const ext = path.extname(file).toLowerCase()
         return {
@@ -219,6 +219,47 @@ router.get('/telegram/output-files', (req, res) => {
   } catch (error) {
     logger.error('Get output files error:', error)
     res.status(500).json({ error: 'Failed to list output files' })
+  }
+})
+
+/**
+ * GET /api/telegram/file/:filename
+ * 提供临时文件的访问接口
+ */
+router.get('/telegram/file/:filename', (req, res) => {
+  try {
+    const { filename } = req.params
+    const filePath = path.join(config.paths.temp, filename)
+
+    // 安全检查：确保文件在临时目录内
+    const resolvedPath = path.resolve(filePath)
+    const tempDirResolved = path.resolve(config.paths.temp)
+    if (!resolvedPath.startsWith(tempDirResolved)) {
+      return res.status(403).json({ error: 'Access denied' })
+    }
+
+    // 检查文件是否存在
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: 'File not found' })
+    }
+
+    // 根据扩展名设置 MIME 类型
+    const ext = path.extname(filename).toLowerCase()
+    const mimeTypes = {
+      '.webp': 'image/webp',
+      '.webm': 'video/webm',
+      '.png': 'image/png'
+    }
+
+    const contentType = mimeTypes[ext] || 'application/octet-stream'
+    res.setHeader('Content-Type', contentType)
+
+    // 流式传输文件
+    const fileStream = fs.createReadStream(filePath)
+    fileStream.pipe(res)
+  } catch (error) {
+    logger.error('File serve error:', error)
+    res.status(500).json({ error: 'Failed to serve file' })
   }
 })
 

@@ -1,5 +1,6 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
+import os from 'os'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -13,8 +14,7 @@ export const config = {
   // 路径配置
   paths: {
     root: rootDir,
-    uploads: path.join(rootDir, 'uploads'),
-    output: path.join(rootDir, 'output'),
+    temp: path.join(os.tmpdir(), 'telegram-sticker-maker'),
     dist: path.join(rootDir, 'dist')
   },
 
@@ -38,10 +38,10 @@ export const config = {
     ]
   },
 
-  // 文件清理配置
-  cleanup: {
-    interval: 3600000, // 1 hour
-    maxAge: 86400000 // 24 hours
+  // 临时文件配置
+  temp: {
+    maxAge: 1800000, // 30 minutes
+    cleanupOnStartup: true
   },
 
   // 贴纸格式要求

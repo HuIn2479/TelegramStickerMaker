@@ -5,12 +5,6 @@ node_modules/
 dist/
 build/
 
-# Upload and output directories
-uploads/*
-!uploads/.gitkeep
-output/*
-!output/.gitkeep
-
 # Logs
 logs/
 *.log

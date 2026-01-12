@@ -16,7 +16,6 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "cross-env NODE_ENV=production node server.js",
-    "clean": "node -e \"const fs=require('fs');const path=require('path');['uploads','output'].forEach(d=>{const dir=path.join(__dirname,d);if(fs.existsSync(dir)){fs.readdirSync(dir).forEach(f=>{const p=path.join(dir,f);if(f!=='.gitkeep')fs.unlinkSync(p)})}})\"",
     "lint": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{js,vue,css}\" \"server/**/*.js\" \"*.js\""
   },

@@ -71,7 +71,7 @@ export class VideoService {
   async convertToSticker(inputPath, originalFilename, startTime = 0, endTime = 3, taskId = null) {
     const tracker = taskId ? new ProgressTracker(taskId, wsManager, 100) : null
     const outputFilename = `${path.basename(originalFilename, path.extname(originalFilename))}-${Date.now()}.webm`
-    const outputPath = path.join(config.paths.output, outputFilename)
+    const outputPath = path.join(config.paths.temp, outputFilename)
 
     // 计算时长（最多3秒）
     const duration = Math.min(endTime - startTime, config.sticker.maxVideoDuration)
@@ -134,7 +134,8 @@ export class VideoService {
           height: outputInfo.height,
           duration: outputInfo.duration,
           size: outputStats.size,
-          url: `/output/${outputFilename}`,
+          filename: outputFilename,
+          path: outputPath,
           sizeValid: outputStats.size <= config.sticker.maxVideoFileSize
         }
       }
