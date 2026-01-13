@@ -200,7 +200,7 @@ router.get('/telegram/output-files', (req, res) => {
       .readdirSync(tempDir)
       .filter(file => {
         const ext = path.extname(file).toLowerCase()
-        return ext === '.webp' || ext === '.webm' || ext === '.png'
+        return ext === '.webp' || ext === '.webm'
       })
       .map(file => {
         const filePath = path.join(tempDir, file)

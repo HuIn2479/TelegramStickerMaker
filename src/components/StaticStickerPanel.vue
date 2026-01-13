@@ -183,7 +183,21 @@ const convertSingle = async taskId => {
       task.progress = data.progress
     } else if (data.type === 'complete') {
       task.status = 'done'
-      task.result = data.result?.result || data.result
+      const result = data.result?.result || data.result
+      
+      // 为 result 添加 url 属性用于预览
+      task.result = {
+        ...result,
+        png: {
+          ...result.png,
+          url: `${API_BASE}/api/telegram/file/${result.png.filename}`
+        },
+        webp: {
+          ...result.webp,
+          url: `${API_BASE}/api/telegram/file/${result.webp.filename}`
+        }
+      }
+      
       task.progress = { percentage: 100, message: t('status.completed') }
 
       // 保存到历史记录
@@ -232,7 +246,19 @@ const convertSingle = async taskId => {
     // 如果没有 WebSocket，使用传统方式
     if (!websocket) {
       task.status = 'done'
-      task.result = data.result
+      
+      // 为 result 添加 url 属性用于预览
+      task.result = {
+        ...data.result,
+        png: {
+          ...data.result.png,
+          url: `${API_BASE}/api/telegram/file/${data.result.png.filename}`
+        },
+        webp: {
+          ...data.result.webp,
+          url: `${API_BASE}/api/telegram/file/${data.result.webp.filename}`
+        }
+      }
 
       saveToHistory({
         id: task.id,

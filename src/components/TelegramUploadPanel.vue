@@ -198,10 +198,10 @@
           @click="toggleSelect(file.name)"
         >
           <div class="file-preview">
-            <img v-if="file.type === 'static'" :src="getFileUrl(file.name)" :alt="file.name" />
+            <img v-if="file.type === 'static'" :src="file.url" :alt="file.name" />
             <video
               v-else
-              :src="getFileUrl(file.name)"
+              :src="file.url"
               muted
               loop
               @mouseenter="$event.target.play()"
@@ -517,7 +517,11 @@ const loadOutputFiles = async () => {
   try {
     const response = await fetch(`${API_BASE}/api/telegram/output-files`)
     const data = await response.json()
-    outputFiles.value = data.files || []
+    // 预先生成 URL，避免模板中重复计算
+    outputFiles.value = (data.files || []).map(file => ({
+      ...file,
+      url: `${API_BASE}/api/telegram/file/${encodeURIComponent(file.name)}`
+    }))
   } catch (error) {
     console.error('Failed to load output files:', error)
   } finally {

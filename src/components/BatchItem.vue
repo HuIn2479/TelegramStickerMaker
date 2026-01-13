@@ -7,14 +7,18 @@
 
     <div class="batch-item-content">
       <div class="batch-item-preview" @click="openPreview(false)">
+        <!-- GIF 使用 img 标签 -->
+        <img v-if="isGif" :src="task.previewUrl" :alt="task.name" />
+        <!-- 视频使用 video 标签 -->
         <video
-          v-if="type === 'video'"
+          v-else-if="type === 'video'"
           :src="task.previewUrl"
           muted
           loop
           @mouseenter="handleMouseEnter"
           @mouseleave="handleMouseLeave"
         ></video>
+        <!-- 静态图片 -->
         <img v-else :src="task.previewUrl" :alt="task.name" />
       </div>
 
@@ -90,6 +94,7 @@
         <template v-if="task.status === 'done' && task.result">
           <div class="batch-item-result">
             <div style="display: flex; gap: 12px; align-items: center">
+              <!-- 转换后的视频结果（包括 GIF 转换后的 WEBM） -->
               <video
                 v-if="type === 'video'"
                 :src="task.result.url"
@@ -98,6 +103,7 @@
                 autoplay
                 @click="openPreview(true)"
               ></video>
+              <!-- 静态贴纸结果 -->
               <img v-else :src="task.result.png.url" alt="Result" @click="openPreview(true)" />
 
               <div>
@@ -172,6 +178,10 @@ const emit = defineEmits(['convert', 'remove', 'retry', 'download', 'preview', '
 
 const statusText = computed(() => getStatusText(props.task.status))
 
+const isGif = computed(() => {
+  return props.task.file?.type === 'image/gif'
+})
+
 const trimDuration = computed(() => {
   if (props.type !== 'video') return 0
   return (props.task.endTime - props.task.startTime).toFixed(1)
@@ -216,10 +226,15 @@ const handleMouseLeave = e => {
 }
 
 const openPreview = (usesResult = false) => {
-  let src, info
+  let src, info, type, startTime, endTime, isGif
 
   if (usesResult && props.task.result) {
+    // 转换完成后的预览
     src = props.type === 'video' ? props.task.result.url : props.task.result.png.url
+    type = 'video' // 转换后的结果都是视频（WEBM）或图片
+    isGif = false // 转换后已经不是 GIF
+    startTime = 0
+    endTime = 0
     info = {
       width: props.task.result.width,
       height: props.task.result.height,
@@ -227,7 +242,12 @@ const openPreview = (usesResult = false) => {
       duration: props.type === 'video' ? props.task.result.duration : 0
     }
   } else {
+    // 原始文件预览
     src = props.task.previewUrl
+    isGif = props.task.file?.type === 'image/gif'
+    type = isGif ? 'gif' : props.type
+    startTime = props.task.startTime || 0
+    endTime = props.task.endTime || 0
     info = {
       width: props.task.width,
       height: props.task.height,
@@ -238,8 +258,11 @@ const openPreview = (usesResult = false) => {
 
   const { openPreview: openModal } = usePreviewModal()
   openModal({
-    type: props.type,
+    type,
     src,
+    startTime,
+    endTime,
+    isGif,
     info
   })
 }

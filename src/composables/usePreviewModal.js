@@ -4,6 +4,9 @@ const state = reactive({
   visible: false,
   type: 'image',
   src: '',
+  startTime: 0,
+  endTime: 0,
+  isGif: false,
   info: {
     width: 0,
     height: 0,
@@ -16,6 +19,9 @@ export function usePreviewModal() {
   const openPreview = options => {
     state.type = options.type || 'image'
     state.src = options.src
+    state.startTime = options.startTime || 0
+    state.endTime = options.endTime || 0
+    state.isGif = options.isGif || false
     state.info = options.info || {}
     state.visible = true
     document.body.style.overflow = 'hidden'

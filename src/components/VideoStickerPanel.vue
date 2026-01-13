@@ -177,6 +177,28 @@ const handleFilesSelected = files => {
 }
 
 const loadVideoMetadata = task => {
+  // GIF 使用 img 元素加载元数据
+  if (task.file.type === 'image/gif') {
+    const img = new Image()
+    img.onload = () => {
+      task.width = img.naturalWidth || 512
+      task.height = img.naturalHeight || 512
+      task.duration = 3 // GIF 默认时长
+      task.endTime = 3
+      img.src = ''
+    }
+    img.onerror = () => {
+      task.duration = 3
+      task.width = 512
+      task.height = 512
+      task.endTime = 3
+      img.src = ''
+    }
+    img.src = task.previewUrl
+    return
+  }
+
+  // 视频使用 video 元素加载元数据
   const video = document.createElement('video')
   video.preload = 'metadata' // 只加载元数据，不加载完整视频
   video.src = task.previewUrl
@@ -207,13 +229,10 @@ const loadVideoMetadata = task => {
 
   video.onerror = e => {
     clearTimeout(timeout)
-    // 对于 GIF，使用默认值继续
-    if (task.file.type === 'image/gif') {
-      task.duration = 3
-      task.width = 512
-      task.height = 512
-      task.endTime = 3
-    }
+    task.duration = 3
+    task.width = 512
+    task.height = 512
+    task.endTime = 3
     video.src = ''
     video.load()
   }
@@ -232,8 +251,11 @@ const previewTrim = taskId => {
   if (!task) return
 
   openPreview({
-    type: 'video',
+    type: task.file.type === 'image/gif' ? 'gif' : 'video',
     src: task.previewUrl,
+    startTime: task.startTime,
+    endTime: task.endTime,
+    isGif: task.file.type === 'image/gif',
     info: {
       width: task.width,
       height: task.height,
@@ -256,7 +278,14 @@ const convertSingle = async taskId => {
       task.progress = data.progress
     } else if (data.type === 'complete') {
       task.status = 'done'
-      task.result = data.result?.result || data.result
+      const result = data.result?.result || data.result
+      
+      // 为 result 添加 url 属性用于预览
+      task.result = {
+        ...result,
+        url: `${API_BASE}/api/telegram/file/${result.filename}`
+      }
+      
       task.progress = { percentage: 100, message: t('status.completed') }
 
       // 保存到历史记录
@@ -305,7 +334,12 @@ const convertSingle = async taskId => {
     // 如果没有 WebSocket，使用传统方式
     if (!websocket) {
       task.status = 'done'
-      task.result = data.result
+      
+      // 为 result 添加 url 属性用于预览
+      task.result = {
+        ...data.result,
+        url: `${API_BASE}/api/telegram/file/${data.result.filename}`
+      }
 
       saveToHistory({
         id: task.id,
