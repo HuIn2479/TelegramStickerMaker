@@ -19,9 +19,10 @@
       <div class="config-form">
         <!-- Bot Token -->
         <div class="form-item">
-          <label class="form-label">{{ t('telegram.config.botToken') }}</label>
+          <label class="form-label" for="bot-token">{{ t('telegram.config.botToken') }}</label>
           <div class="form-input-group">
             <input
+              id="bot-token"
               v-model="botToken"
               class="form-input"
               :type="showToken ? 'text' : 'password'"
@@ -83,8 +84,9 @@
 
         <!-- 用户 ID -->
         <div class="form-item">
-          <label class="form-label">{{ t('telegram.config.userId') }}</label>
+          <label class="form-label" for="user-id">{{ t('telegram.config.userId') }}</label>
           <input
+            id="user-id"
             v-model="userId"
             class="form-input"
             type="text"
@@ -95,8 +97,9 @@
 
         <!-- 贴纸包名称 -->
         <div class="form-item">
-          <label class="form-label">{{ t('telegram.config.packName') }}</label>
+          <label class="form-label" for="pack-name">{{ t('telegram.config.packName') }}</label>
           <input
+            id="pack-name"
             v-model="packName"
             class="form-input"
             type="text"
@@ -107,8 +110,9 @@
 
         <!-- 贴纸包标题 -->
         <div class="form-item">
-          <label class="form-label">{{ t('telegram.config.packTitle') }}</label>
+          <label class="form-label" for="pack-title">{{ t('telegram.config.packTitle') }}</label>
           <input
+            id="pack-title"
             v-model="packTitle"
             class="form-input"
             type="text"
@@ -119,9 +123,10 @@
 
         <!-- 默认表情 -->
         <div class="form-item">
-          <label class="form-label">{{ t('telegram.config.emoji') }}</label>
+          <label class="form-label" for="default-emoji">{{ t('telegram.config.emoji') }}</label>
           <div class="emoji-input-wrapper" :class="{ 'emoji-input-wrapper_error': !!emojiError }">
             <input
+              id="default-emoji"
               v-model="defaultEmoji"
               class="emoji-input"
               type="text"
@@ -331,10 +336,9 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getApiBaseUrl } from '../utils/env'
 
 const { t } = useI18n()
-const API_BASE = getApiBaseUrl()
+const API_BASE = ''
 
 // WebSocket 订阅
 const { subscribe, unsubscribe } = inject('websocket')

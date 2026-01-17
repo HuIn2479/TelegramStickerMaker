@@ -86,10 +86,15 @@ import { useI18n } from 'vue-i18n'
 import UploadZone from './UploadZone.vue'
 import BatchItem from './BatchItem.vue'
 import { generateId, downloadFile, saveToHistory } from '@/utils/helpers'
-import { getApiBaseUrl, getUploadLimits } from '@/utils/env'
 
 const { t } = useI18n()
-const API_BASE = getApiBaseUrl()
+
+const limits = {
+  maxImageFiles: 20,
+  maxVideoFiles: 10,
+  maxFileSize: 52428800 // 50MB
+}
+const API_BASE = ''
 
 const emit = defineEmits(['converted'])
 
@@ -129,7 +134,6 @@ const handleFilesSelected = files => {
   }
 
   // 限制最多一次上传的文件数量
-  const limits = getUploadLimits()
   const MAX_FILES = limits.maxImageFiles
 
   if (validFiles.length > MAX_FILES) {

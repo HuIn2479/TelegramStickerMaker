@@ -21,7 +21,7 @@
         icon="video"
         :text="t('upload.video.text')"
         :hint="t('upload.video.hint')"
-        accept="image/gif,video/mp4,video/webm,video/quicktime,video/x-msvideo"
+        accept="image/gif,video/mp4,video/webm"
         @files-selected="handleFilesSelected"
       />
     </div>
@@ -97,12 +97,16 @@ import { useI18n } from 'vue-i18n'
 import UploadZone from './UploadZone.vue'
 import BatchItem from './BatchItem.vue'
 import { generateId, downloadFile, saveToHistory } from '@/utils/helpers'
-import { getApiBaseUrl } from '@/utils/env'
 import { usePreviewModal } from '@/composables/usePreviewModal'
-import { getUploadLimits } from '@/utils/env'
 
 const { t } = useI18n()
-const API_BASE = getApiBaseUrl()
+
+const limits = {
+  maxImageFiles: 20,
+  maxVideoFiles: 10,
+  maxFileSize: 52428800 // 50MB
+}
+const API_BASE = ''
 
 const emit = defineEmits(['converted'])
 const tasks = ref([])
@@ -130,9 +134,7 @@ const handleFilesSelected = files => {
     const isValid =
       file.type === 'image/gif' ||
       file.type === 'video/mp4' ||
-      file.type === 'video/webm' ||
-      file.type === 'video/quicktime' || // MOV
-      file.type === 'video/x-msvideo' // AVI
+      file.type === 'video/webm'
     return isValid
   })
 
@@ -146,7 +148,6 @@ const handleFilesSelected = files => {
   }
 
   // 限制最多一次上传的视频文件数量
-  const limits = getUploadLimits()
   const MAX_FILES = limits.maxVideoFiles
 
   if (validFiles.length > MAX_FILES) {

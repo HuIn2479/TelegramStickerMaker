@@ -24,7 +24,7 @@ export const config = {
     maxImageFiles: 20, // 最多上传图片数量
     maxVideoFiles: 10, // 最多上传视频数量
     allowedImageTypes: /jpeg|jpg|png|webp|gif/,
-    allowedVideoTypes: /gif|mp4|webm|quicktime|x-msvideo/,
+    allowedVideoTypes: /gif|mp4|webm/,
     allowedMimeTypes: [
       'image/jpeg',
       'image/jpg',
@@ -32,9 +32,7 @@ export const config = {
       'image/webp',
       'image/gif',
       'video/mp4',
-      'video/webm',
-      'video/quicktime',
-      'video/x-msvideo'
+      'video/webm'
     ]
   },
 

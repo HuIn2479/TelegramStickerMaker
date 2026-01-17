@@ -8,13 +8,20 @@
     <div class="batch-item-content">
       <div class="batch-item-preview" @click="openPreview(false)">
         <!-- GIF 使用 img 标签 -->
-        <img v-if="isGif" :src="task.previewUrl" :alt="task.name" />
+        <img
+          v-if="isGif"
+          :src="isHovering ? task.previewUrl : staticPreviewUrl || task.previewUrl"
+          :alt="task.name"
+          @mouseenter="isHovering = true"
+          @mouseleave="isHovering = false"
+        />
         <!-- 视频使用 video 标签 -->
         <video
           v-else-if="type === 'video'"
           :src="task.previewUrl"
           muted
           loop
+          preload="metadata"
           @mouseenter="handleMouseEnter"
           @mouseleave="handleMouseLeave"
         ></video>
@@ -25,42 +32,6 @@
       <div class="batch-item-controls">
         <!-- 待转换状态 -->
         <template v-if="task.status === 'pending'">
-          <!-- 视频时间截取控制 -->
-          <div v-if="type === 'video'" class="trim-control">
-            <div class="trim-label">
-              <span>{{ t('item.trimTime') }}</span>
-              <span>{{ trimDuration }}s / {{ task.duration.toFixed(1) }}s</span>
-            </div>
-            <div class="trim-inputs">
-              <div class="trim-input-group">
-                <label>{{ t('item.start') }}</label>
-                <input
-                  type="number"
-                  :value="task.startTime.toFixed(1)"
-                  min="0"
-                  :max="task.duration"
-                  step="0.1"
-                  @change="handleStartTimeChange"
-                />
-              </div>
-              <div class="trim-input-group">
-                <label>{{ t('item.end') }}</label>
-                <input
-                  type="number"
-                  :value="task.endTime.toFixed(1)"
-                  min="0"
-                  :max="task.duration"
-                  step="0.1"
-                  @change="handleEndTimeChange"
-                />
-              </div>
-              <div class="trim-input-group">
-                <label>{{ t('item.duration') }}</label>
-                <span class="info-tag" :class="isDurationValid ? 'valid' : 'invalid'">{{ trimDuration }}s</span>
-              </div>
-            </div>
-          </div>
-
           <div class="batch-item-info">
             <span v-if="task.width && task.height" class="info-tag">{{ task.width }}×{{ task.height }}</span>
             <span v-else class="info-tag">{{ t('item.loading') }}</span>
@@ -69,9 +40,6 @@
 
           <div class="batch-item-actions">
             <button class="btn btn-primary" @click="$emit('convert', task.id)">{{ t('item.convert') }}</button>
-            <button v-if="type === 'video'" class="btn btn-secondary" @click="$emit('preview', task.id)">
-              {{ t('item.preview') }}
-            </button>
             <button class="btn btn-secondary" @click="$emit('remove', task.id)">{{ t('item.remove') }}</button>
           </div>
         </template>
@@ -100,7 +68,8 @@
                 :src="task.result.url"
                 muted
                 loop
-                autoplay
+                @mouseenter="handleMouseEnter"
+                @mouseleave="handleMouseLeave"
                 @click="openPreview(true)"
               ></video>
               <!-- 静态贴纸结果 -->
@@ -156,7 +125,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { formatFileSize, getStatusText } from '@/utils/helpers'
 import { usePreviewModal } from '@/composables/usePreviewModal'
@@ -174,7 +143,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['convert', 'remove', 'retry', 'download', 'preview', 'updateTime'])
+const emit = defineEmits(['convert', 'remove', 'retry', 'download', 'preview'])
 
 const statusText = computed(() => getStatusText(props.task.status))
 
@@ -182,27 +151,35 @@ const isGif = computed(() => {
   return props.task.file?.type === 'image/gif'
 })
 
-const trimDuration = computed(() => {
-  if (props.type !== 'video') return 0
-  return (props.task.endTime - props.task.startTime).toFixed(1)
-})
+const isHovering = ref(false)
+const staticPreviewUrl = ref('')
 
-const isDurationValid = computed(() => {
-  if (props.type !== 'video') return true
-  return props.task.endTime - props.task.startTime <= 3
-})
+const generateStaticGifPreview = () => {
+  if (!props.task.previewUrl) return
 
-const handleStartTimeChange = e => {
-  let value = Math.max(0, Math.min(parseFloat(e.target.value) || 0, props.task.duration))
-  if (value > props.task.endTime) value = props.task.endTime
-  emit('updateTime', { id: props.task.id, startTime: value })
+  const img = new Image()
+  img.src = props.task.previewUrl
+  img.onload = () => {
+    const canvas = document.createElement('canvas')
+    canvas.width = img.width
+    canvas.height = img.height
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(img, 0, 0)
+    staticPreviewUrl.value = canvas.toDataURL('image/png')
+  }
 }
 
-const handleEndTimeChange = e => {
-  let value = Math.max(0, Math.min(parseFloat(e.target.value) || 0, props.task.duration))
-  if (value < props.task.startTime) value = props.task.startTime
-  emit('updateTime', { id: props.task.id, endTime: value })
-}
+watch(
+  () => props.task.previewUrl,
+  () => {
+    if (isGif.value) {
+      generateStaticGifPreview()
+    } else {
+      staticPreviewUrl.value = ''
+    }
+  },
+  { immediate: true }
+)
 
 const handleMouseEnter = e => {
   if (props.type === 'video') {
@@ -217,7 +194,6 @@ const handleMouseLeave = e => {
   if (props.type === 'video') {
     try {
       e.target.pause()
-      e.target.currentTime = 0
     } catch (err) {
       // 忽略暂停错误
       console.warn('视频暂停失败:', err.message)
@@ -231,7 +207,7 @@ const openPreview = (usesResult = false) => {
   if (usesResult && props.task.result) {
     // 转换完成后的预览
     src = props.type === 'video' ? props.task.result.url : props.task.result.png.url
-    type = 'video' // 转换后的结果都是视频（WEBM）或图片
+    type = type = props.type
     isGif = false // 转换后已经不是 GIF
     startTime = 0
     endTime = 0

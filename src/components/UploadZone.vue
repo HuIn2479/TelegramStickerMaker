@@ -27,7 +27,16 @@
       <p class="upload-text">{{ text }}</p>
       <p class="upload-hint">{{ hint }}</p>
     </div>
-    <input ref="fileInput" type="file" :accept="accept" :multiple="multiple" @change="handleFileChange" @click.stop />
+    <input
+      ref="fileInput"
+      :id="inputId"
+      :name="inputId"
+      type="file"
+      :accept="accept"
+      :multiple="multiple"
+      @change="handleFileChange"
+      @click.stop
+    />
   </div>
 </template>
 
@@ -57,6 +66,7 @@ const props = defineProps({
   }
 })
 
+const inputId = computed(() => `upload-input-${props.icon}`)
 const emit = defineEmits(['filesSelected'])
 
 const isDragover = ref(false)
