@@ -21,8 +21,8 @@ export const config = {
   // 文件上传配置
   upload: {
     maxFileSize: 52428800, // 50MB
-    maxImageFiles: 20, // 最多上传图片数量
-    maxVideoFiles: 10, // 最多上传视频数量
+    maxImageFiles: 200, // 最多上传图片数量
+    maxVideoFiles: 100, // 最多上传视频数量
     allowedImageTypes: /jpeg|jpg|png|webp|gif/,
     allowedVideoTypes: /gif|mp4|webm/,
     allowedMimeTypes: [

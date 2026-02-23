@@ -13,6 +13,24 @@ import wsManager from '../utils/websocket.js'
 
 const router = express.Router()
 
+const TELEGRAM_STICKER_EXTENSIONS = new Set(['.webp', '.webm'])
+
+const isUploadTempFile = fileName => /^upload-\d+-\d+\./i.test(fileName)
+
+const isTelegramOutputSticker = (dirPath, fileName) => {
+  const ext = path.extname(fileName).toLowerCase()
+  if (!TELEGRAM_STICKER_EXTENSIONS.has(ext)) {
+    return false
+  }
+
+  if (isUploadTempFile(fileName)) {
+    return false
+  }
+
+  const filePath = path.join(dirPath, fileName)
+  return fs.statSync(filePath).isFile()
+}
+
 /**
  * POST /api/telegram/validate
  * 验证 Bot Token
@@ -198,10 +216,7 @@ router.get('/telegram/output-files', (req, res) => {
 
     const files = fs
       .readdirSync(tempDir)
-      .filter(file => {
-        const ext = path.extname(file).toLowerCase()
-        return ext === '.webp' || ext === '.webm'
-      })
+      .filter(file => isTelegramOutputSticker(tempDir, file))
       .map(file => {
         const filePath = path.join(tempDir, file)
         const stats = fs.statSync(filePath)

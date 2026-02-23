@@ -410,6 +410,17 @@ const progressPercent = computed(() => {
   return Math.round((uploadProgress.value.current / uploadProgress.value.total) * 100)
 })
 
+const isFinalStickerFile = file => {
+  const fileName = String(file?.name || '')
+  if (!fileName) return false
+
+  const lower = fileName.toLowerCase()
+  const isSticker = lower.endsWith('.webp') || lower.endsWith('.webm')
+  const isUploadTemp = /^upload-\d+-\d+\./i.test(fileName)
+
+  return isSticker && !isUploadTemp
+}
+
 // 方法
 const loadConfig = () => {
   const saved = localStorage.getItem('telegram_config')
@@ -522,10 +533,12 @@ const loadOutputFiles = async () => {
     const response = await fetch(`${API_BASE}/api/telegram/output-files`)
     const data = await response.json()
     // 预先生成 URL，避免模板中重复计算
-    outputFiles.value = (data.files || []).map(file => ({
-      ...file,
-      url: `${API_BASE}/api/telegram/file/${encodeURIComponent(file.name)}`
-    }))
+    outputFiles.value = (data.files || [])
+      .filter(isFinalStickerFile)
+      .map(file => ({
+        ...file,
+        url: `${API_BASE}/api/telegram/file/${encodeURIComponent(file.name)}`
+      }))
   } catch (error) {
     console.error('Failed to load output files:', error)
   } finally {

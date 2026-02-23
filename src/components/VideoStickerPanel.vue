@@ -92,24 +92,28 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onBeforeUnmount, inject } from 'vue'
+import { ref, reactive, computed, onMounted, onBeforeUnmount, inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import UploadZone from './UploadZone.vue'
 import BatchItem from './BatchItem.vue'
 import { generateId, downloadFile, saveToHistory } from '@/utils/helpers'
 import { usePreviewModal } from '@/composables/usePreviewModal'
+import { fetchUploadLimits, getUploadLimits } from '@/config'
 
 const { t } = useI18n()
 
-const limits = {
-  maxImageFiles: 20,
-  maxVideoFiles: 10,
-  maxFileSize: 52428800 // 50MB
-}
+const limits = reactive(getUploadLimits())
 const API_BASE = ''
 
 const emit = defineEmits(['converted'])
 const tasks = ref([])
+
+onMounted(async () => {
+  const serverLimits = await fetchUploadLimits()
+  limits.maxImageFiles = serverLimits.maxImageFiles
+  limits.maxVideoFiles = serverLimits.maxVideoFiles
+  limits.maxFileSize = serverLimits.maxFileSize
+})
 
 // 注入 WebSocket
 const websocket = inject('websocket', null)
