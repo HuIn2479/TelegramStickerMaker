@@ -26,20 +26,21 @@
     "form-data": "^4.0.5",
     "multer": "^2.0.2",
     "sharp": "^0.34.5",
-    "vue": "^3.5.26",
+    "vue": "^3.5.28",
     "vue-i18n": "^11.2.8",
     "weui": "^2.6.25",
     "ws": "^8.19.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
-    "@vitejs/plugin-vue": "^6.0.3",
+    "@eslint/js": "^10.0.1",
+    "@vitejs/plugin-vue": "^6.0.4",
     "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.1",
     "eslint-config-prettier": "^10.0.1",
-    "eslint-plugin-vue": "^10.6.2",
-    "prettier": "^3.4.2",
-    "vite": "^7.3.0"
+    "eslint-plugin-vue": "^10.8.0",
+    "prettier": "^3.8.1",
+    "vite": "^7.3.0",
+    "vue-eslint-parser": "^10.4.0"
   }
 }

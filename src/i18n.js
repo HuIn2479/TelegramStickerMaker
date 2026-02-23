@@ -4,7 +4,7 @@ import en from './locales/en'
 
 // 获取浏览器语言
 const getBrowserLanguage = () => {
-  const lang = navigator.language.toLowerCase()
+  const lang = String(globalThis.navigator?.language || 'en').toLowerCase()
   if (lang.startsWith('zh')) {
     return 'zh'
   }

@@ -19,7 +19,7 @@ export function requestLogger(req, res, next) {
 /**
  * 错误处理中间件
  */
-export function errorHandler(err, req, res, next) {
+export function errorHandler(err, req, res, _next) {
   logger.error(`Error handling ${req.method} ${req.path}:`, err)
 
   const statusCode = err.statusCode || 500

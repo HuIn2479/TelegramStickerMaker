@@ -143,7 +143,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['convert', 'remove', 'retry', 'download', 'preview'])
+defineEmits(['convert', 'remove', 'retry', 'download', 'preview'])
 
 const statusText = computed(() => getStatusText(props.task.status))
 
@@ -207,7 +207,7 @@ const openPreview = (usesResult = false) => {
   if (usesResult && props.task.result) {
     // 转换完成后的预览
     src = props.type === 'video' ? props.task.result.url : props.task.result.png.url
-    type = type = props.type
+    type = props.type
     isGif = false // 转换后已经不是 GIF
     startTime = 0
     endTime = 0

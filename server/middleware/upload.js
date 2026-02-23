@@ -1,6 +1,7 @@
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
+import { Buffer } from 'node:buffer'
 import config from '../config/index.js'
 
 /**
@@ -18,10 +19,10 @@ function ensureTempDir() {
 function fixFilenameEncoding(filename) {
   try {
     // 如果文件名已经是正确的 UTF-8，直接返回
-    if (/^[\x00-\x7F]*$/.test(filename)) return filename
+    if (Array.from(filename).every(char => char.charCodeAt(0) <= 0x7f)) return filename
     // 将 ISO-8859-1 误解码的字符串转回 Buffer，再用 UTF-8 正确解码
     return Buffer.from(filename, 'latin1').toString('utf8')
-  } catch (error) {
+  } catch {
     return filename
   }
 }

@@ -77,7 +77,7 @@ export function getHistory() {
     }
 
     return validHistory
-  } catch (e) {
+  } catch {
     return []
   }
 }

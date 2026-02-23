@@ -433,7 +433,9 @@ const loadConfig = () => {
       packTitle.value = config.packTitle || ''
       defaultEmoji.value = config.emoji || '😊'
       lastValidEmoji.value = defaultEmoji.value
-    } catch {}
+    } catch {
+      localStorage.removeItem('telegram_config')
+    }
   }
 }
 
@@ -546,10 +548,6 @@ const loadOutputFiles = async () => {
   }
 }
 
-const getFileUrl = fileName => {
-  return `${API_BASE}/api/telegram/file/${encodeURIComponent(fileName)}`
-}
-
 const isSelected = fileName => {
   return selectedFiles.value.includes(fileName)
 }
@@ -573,13 +571,6 @@ const toggleSelectAll = () => {
 
 const clearSelection = () => {
   selectedFiles.value = []
-}
-
-const truncateName = name => {
-  if (name.length > 15) {
-    return name.substring(0, 12) + '...'
-  }
-  return name
 }
 
 const startUpload = async () => {

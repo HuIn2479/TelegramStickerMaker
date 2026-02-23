@@ -36,7 +36,7 @@ async function parseResponse(response, method) {
 
   try {
     return JSON.parse(responseText)
-  } catch (parseError) {
+  } catch {
     logger.error(`Failed to parse Telegram API response for ${method}: ${responseText.substring(0, 500)}`)
     return {
       ok: false,
@@ -215,7 +215,7 @@ export async function uploadStickerFile(botToken, userId, stickerPath, stickerFo
               return reject(new Error(result.description || 'Failed to upload sticker file'))
             }
             resolve(result.result)
-          } catch (parseError) {
+          } catch {
             logger.error(`Failed to parse response: ${responseBody}`)
             return reject(new Error(`Invalid JSON response: ${responseBody.substring(0, 200)}`))
           }

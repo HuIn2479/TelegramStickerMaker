@@ -25,7 +25,7 @@ class WebSocketManager {
       maxPayload: 10 * 1024 * 1024
     })
 
-    this.wss.on('connection', (ws, req) => {
+    this.wss.on('connection', (ws, _req) => {
       const clientId = this.generateClientId()
       ws.isAlive = true
       ws.clientId = clientId

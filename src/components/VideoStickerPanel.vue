@@ -232,7 +232,7 @@ const loadVideoMetadata = task => {
     video.load()
   }
 
-  video.onerror = e => {
+  video.onerror = _e => {
     clearTimeout(timeout)
     task.duration = 3
     task.width = 512
