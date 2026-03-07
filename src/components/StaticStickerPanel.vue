@@ -192,7 +192,7 @@ const convertSingle = async taskId => {
     } else if (data.type === 'complete') {
       task.status = 'done'
       const result = data.result?.result || data.result
-      
+
       // 为 result 添加 url 属性用于预览
       task.result = {
         ...result,
@@ -205,7 +205,7 @@ const convertSingle = async taskId => {
           url: `${API_BASE}/api/telegram/file/${result.webp.filename}`
         }
       }
-      
+
       task.progress = { percentage: 100, message: t('status.completed') }
 
       // 保存到历史记录
@@ -254,7 +254,7 @@ const convertSingle = async taskId => {
     // 如果没有 WebSocket，使用传统方式
     if (!websocket) {
       task.status = 'done'
-      
+
       // 为 result 添加 url 属性用于预览
       task.result = {
         ...data.result,

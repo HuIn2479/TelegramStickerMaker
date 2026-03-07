@@ -7,15 +7,7 @@
         <!-- GIF 使用 img 标签 -->
         <img v-if="state.type === 'gif'" :src="state.src" alt="GIF Preview" />
         <!-- 视频使用 video 标签并支持时间片段 -->
-        <video
-          v-else-if="state.type === 'video'"
-          ref="videoRef"
-          :src="state.src"
-          autoplay
-          loop
-          muted
-          controls
-        ></video>
+        <video v-else-if="state.type === 'video'" ref="videoRef" :src="state.src" autoplay loop muted controls></video>
         <!-- 静态图片 -->
         <img v-else :src="state.src" alt="Preview" />
 
@@ -60,21 +52,21 @@ watch(
   ([visible, type]) => {
     if (visible && type === 'video' && videoRef.value) {
       const video = videoRef.value
-      
+
       // 设置起始时间
       if (state.startTime > 0) {
         video.currentTime = state.startTime
       }
-      
+
       // 监听播放进度，循环播放截取片段
       const handleTimeUpdate = () => {
         if (state.endTime > 0 && video.currentTime >= state.endTime) {
           video.currentTime = state.startTime
         }
       }
-      
+
       video.addEventListener('timeupdate', handleTimeUpdate)
-      
+
       // 清理函数
       return () => {
         video.removeEventListener('timeupdate', handleTimeUpdate)

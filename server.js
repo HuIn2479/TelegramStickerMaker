@@ -51,7 +51,7 @@ app.use('/api', routes)
 
 // 生产环境下，所有其他路由返回 index.html
 if (config.env === 'production') {
-  app.get('*', (req, res) => {
+  app.get(/.*/, (req, res) => {
     res.sendFile(path.join(config.paths.dist, 'index.html'))
   })
 }

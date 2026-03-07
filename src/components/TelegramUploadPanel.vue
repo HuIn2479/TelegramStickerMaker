@@ -381,7 +381,8 @@ const isValidEmoji = value => {
   if (!/\p{Extended_Pictographic}/u.test(str)) return false
 
   // 允许 ZWJ/变体选择符/修饰符/多码点组合
-  const emojiRegex = /^(?:\p{Extended_Pictographic}|\p{Emoji_Presentation})(?:\uFE0F|\u200D|\p{Emoji_Modifier}|\p{Extended_Pictographic})*$/u
+  const emojiRegex =
+    /^(?:\p{Extended_Pictographic}|\p{Emoji_Presentation})(?:\uFE0F|\u200D|\p{Emoji_Modifier}|\p{Extended_Pictographic})*$/u
   return emojiRegex.test(str)
 }
 
@@ -535,12 +536,10 @@ const loadOutputFiles = async () => {
     const response = await fetch(`${API_BASE}/api/telegram/output-files`)
     const data = await response.json()
     // 预先生成 URL，避免模板中重复计算
-    outputFiles.value = (data.files || [])
-      .filter(isFinalStickerFile)
-      .map(file => ({
-        ...file,
-        url: `${API_BASE}/api/telegram/file/${encodeURIComponent(file.name)}`
-      }))
+    outputFiles.value = (data.files || []).filter(isFinalStickerFile).map(file => ({
+      ...file,
+      url: `${API_BASE}/api/telegram/file/${encodeURIComponent(file.name)}`
+    }))
   } catch (error) {
     console.error('Failed to load output files:', error)
   } finally {
