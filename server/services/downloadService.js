@@ -30,7 +30,22 @@ export class DownloadService {
 
     // 添加文件到压缩包
     for (const file of files) {
-      const filePath = path.join(config.paths.root, file.url)
+      let filename = ''
+      try {
+        const urlObj = new URL(file.url, 'http://localhost')
+        filename = path.basename(urlObj.pathname)
+      } catch (e) {
+        filename = path.basename(file.url || '')
+      }
+      try {
+        filename = decodeURIComponent(filename)
+      } catch (e) {
+        // Ignore potential malformed URI errors
+      }
+
+      if (!filename) continue;
+
+      const filePath = path.join(config.paths.temp, filename)
       try {
         archive.file(filePath, { name: file.name })
       } catch (error) {
