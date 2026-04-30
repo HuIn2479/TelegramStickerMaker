@@ -5,7 +5,15 @@ export default defineNuxtConfig({
   css: ['@/assets/css/main.css'],
   modules: ['@pinia/nuxt'],
   nitro: {
-    preset: 'vercel'
+    preset: 'vercel',
+    routeRules: {
+      '/**': {
+        headers: {
+          'Cross-Origin-Opener-Policy': 'same-origin',
+          'Cross-Origin-Embedder-Policy': 'credentialless'
+        }
+      }
+    }
   },
   vite: {
     optimizeDeps: {
