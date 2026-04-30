@@ -41,7 +41,7 @@ export function useFfmpeg() {
         convertProgress.value = Math.round(progress * 100)
       })
 
-      const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
+      const baseURL = '/ffmpeg'
       const CACHE_NAME = 'ffmpeg-wasm-cache'
 
       const cachedFetch = async (url: string, mimeType: string): Promise<string> => {
