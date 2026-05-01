@@ -58,33 +58,31 @@
               <img v-if="item.type === 'image'" :src="item.preview" :alt="item.fileName" />
               <video v-else :src="item.preview" muted loop></video>
             </div>
-            <div>
-              <div class="workbench-header">
-                <strong>{{ item.fileName }}</strong>
+            <div class="history-info">
+              <div class="history-info-header">
+                <strong class="history-name" :title="item.fileName">{{ item.fileName }}</strong>
                 <label class="chip">
                   <input type="checkbox" :checked="selectedIds.includes(item.id)" @change="toggleSelect(item.id)" />
                   选择
                 </label>
               </div>
               <div class="history-meta">
-                <span>{{ item.width }}×{{ item.height }}</span>
+                <span v-if="item.width">{{ item.width }}x{{ item.height }}</span>
                 <span>{{ formatFileSize(item.size || 0) }}</span>
                 <span>{{ formatTimestamp(item.timestamp) }}</span>
               </div>
-              <div class="history-meta mt-sm">
+              <div class="history-meta">
                 <span class="chip">{{ item.type === 'image' ? '静态' : '动态' }}</span>
                 <span v-if="item.result?.png" class="chip">PNG</span>
                 <span v-if="item.result?.webp" class="chip">WEBP</span>
                 <span v-if="item.result?.webm" class="chip">WEBM</span>
               </div>
-              <div class="mt-sm">
-                <input
-                  class="input-field w-full"
-                  :value="item.inputTag || ''"
-                  placeholder="为这条记录添加标签"
-                  @change="(e: Event) => updateTag(item.id, (e.target as HTMLInputElement).value)"
-                />
-              </div>
+              <input
+                class="input-field history-tag-input"
+                :value="item.inputTag || ''"
+                placeholder="添加标签"
+                @change="(e: Event) => updateTag(item.id, (e.target as HTMLInputElement).value)"
+              />
             </div>
             <div class="history-actions">
               <button class="kv-action secondary" type="button" @click="downloadOne(item, 'png')" :disabled="!item.result?.png">PNG</button>
@@ -168,7 +166,7 @@ const removeSelected = () => { historyStore.removeMany(selectedIds.value); selec
 const clearHistory = () => { historyStore.clear(); selectedIds.value = [] }
 
 const openPreview = (item: any) => {
-  const meta = `${item.width}×${item.height} · ${formatFileSize(item.size || 0)}`
+  const meta = `${item.width}x${item.height} · ${formatFileSize(item.size || 0)}`
   if (item.type === 'image') {
     lightbox.openImage(item.preview, item.fileName, meta)
   } else {

@@ -329,6 +329,34 @@
   align-items: center;
 }
 
+.history-info {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+
+.history-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-sm);
+}
+
+.history-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.history-tag-input {
+  margin-top: 2px;
+}
+
 .history-actions {
   display: grid;
   gap: var(--gap-xs);
