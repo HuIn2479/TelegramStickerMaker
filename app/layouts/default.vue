@@ -3,7 +3,7 @@
     <div class="kv-container">
       <header class="nav-bar">
         <div class="nav-brand">
-          <div class="nav-mark" aria-hidden="true"></div>
+          <img class="nav-mark" src="/icon.png" alt="Logo" />
           <div>
             <div class="nav-title">Telegram Sticker Maker</div>
             <div class="nav-subtitle">贴纸制作与上传工具</div>

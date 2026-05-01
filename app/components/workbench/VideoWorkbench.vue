@@ -6,7 +6,7 @@
           <strong>动态贴纸转换</strong>
           <div class="text-secondary">GIF / MP4 / WEBM → WEBM VP9</div>
         </div>
-        <div class="chip">默认 2 秒</div>
+        <div class="chip">默认 3 秒</div>
       </div>
       <UploadZone
         title="拖拽视频到此处"
@@ -44,8 +44,8 @@
           <div class="task-preview" @click="openPreview(task)">
             <video :src="task.previewUrl" muted loop></video>
           </div>
-          <div>
-            <strong>{{ task.name }}</strong>
+          <div class="task-info">
+            <strong class="task-name" :title="task.name">{{ task.name }}</strong>
             <div class="history-meta">
               <span>{{ formatFileSize(task.file.size) }}</span>
               <span class="chip">{{ statusText(task.status) }}</span>

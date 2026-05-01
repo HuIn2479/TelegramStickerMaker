@@ -36,8 +36,8 @@
           <div class="task-preview" @click="openPreview(task)">
             <img :src="task.previewUrl" :alt="task.name" />
           </div>
-          <div>
-            <strong>{{ task.name }}</strong>
+          <div class="task-info">
+            <strong class="task-name" :title="task.name">{{ task.name }}</strong>
             <div class="history-meta">
               <span v-if="task.width">{{ task.width }}×{{ task.height }}</span>
               <span>{{ formatFileSize(task.file.size) }}</span>

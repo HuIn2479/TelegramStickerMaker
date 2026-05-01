@@ -40,9 +40,8 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-sm);
-  background: var(--color-accent-gradient);
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+  object-fit: contain;
 }
 
 .nav-title {

@@ -4,6 +4,17 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['@/assets/css/main.css'],
   modules: ['@pinia/nuxt'],
+  app: {
+    head: {
+      title: 'Telegram Sticker Maker',
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/icon.png' }
+      ],
+      meta: [
+        { name: 'theme-color', content: '#2196F3' }
+      ]
+    }
+  },
   nitro: {
     preset: 'vercel'
   },
