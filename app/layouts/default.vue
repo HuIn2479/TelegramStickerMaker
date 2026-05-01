@@ -100,22 +100,21 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
-  background: transparent;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--color-bg-subtle);
   color: var(--color-text-secondary);
   font-size: 0.8rem;
   font-family: var(--font-sans);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   white-space: nowrap;
 }
 
 .theme-toggle:hover {
   background: var(--color-surface-hover);
   color: var(--color-text);
-  border-color: var(--color-border-strong);
 }
 
 .theme-icon {

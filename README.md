@@ -1,62 +1,63 @@
 # Telegram Sticker Maker
 
-Create and upload Telegram stickers from images and videos.
+Telegram 贴纸制作与上传工具。支持静态 / 动态贴纸转换，批量处理，一键上传到贴纸包。
 
-## Features
+## 功能
 
-- **Static Sticker Conversion** — PNG/WEBP/JPG to 512×512 stickers (PNG + WEBP output)
-- **Animated Sticker Conversion** — GIF/MP4/WEBM to WEBM VP9 via client-side ffmpeg.wasm (auto-compress to 256KB)
-- **Telegram Integration** — Validate bot tokens, create sticker packs, batch upload
-- **Batch Operations** — Process multiple files, batch download as ZIP
-- **History Archive** — Timeline-based history with search, filters, tags
-- **Dark Mode** — System preference detection with manual toggle (system/light/dark)
-- **Responsive** — Mobile-first layout, lightbox preview
+- **静态贴纸** — PNG / WEBP / JPG → 512x512 贴纸（PNG + WEBP 双格式输出）
+- **动态贴纸** — GIF / MP4 / WEBM → WEBM VP9（服务端 FFmpeg 处理，自动压缩至 256KB 内）
+- **Telegram 集成** — 验证 Bot Token、创建贴纸包、批量上传
+- **批量操作** — 多文件处理、ZIP 批量下载
+- **历史记录** — 时间线归档、搜索、筛选
+- **深色模式** — 跟随系统 / 手动切换（系统 / 浅色 / 深色）
+- **响应式** — 移动端适配、灯箱预览
+- **FFmpeg 自适应** — 未安装 FFmpeg 的设备自动隐藏动态贴纸功能
 
-## Tech Stack
+## 技术栈
 
-- **Frontend:** Nuxt 4, Vue 3, Pinia
-- **Video Processing:** ffmpeg.wasm (client-side, no server FFmpeg required)
-- **Image Processing:** Sharp (server-side via Nitro)
-- **Deployment:** Vercel (preset configured)
+- **前端：** Nuxt 4、Vue 3、Pinia
+- **图片处理：** Sharp（服务端 Nitro）
+- **视频处理：** 系统 FFmpeg
+- **部署：** Vercel
 
-## Prerequisites
+## 环境要求
 
-- Node.js 20+
+- Node.js >= 22
+- FFmpeg
 
-## Setup
+## 快速开始
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Build
+## 构建部署
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## Environment Variables
+## 环境变量
 
-No environment variables required. The Telegram bot token is provided per-request through the UI.
+无需环境变量。Telegram Bot Token 在 UI 中按需输入。
 
-## Project Structure
+## 项目结构
 
 ```text
-app/                    # Nuxt 4 frontend
-  assets/css/           # Design tokens and styles
-  components/           # Vue components
-  composables/          # useFfmpeg, useLightbox
-  layouts/              # Page layouts with theme toggle
-  pages/                # Route pages
-  stores/               # Pinia state
-  utils/                # Helpers
-server/                 # Nitro backend
-  api/                  # API endpoints
-  middleware/           # COOP/COEP headers for SharedArrayBuffer
-  services/             # Image, video, Telegram services
-  utils/                # Config, logger, file cleanup
+app/                      # Nuxt 4 前端
+  assets/css/             # 设计系统与样式
+  components/             # Vue 组件
+  composables/            # useLightbox 等组合式函数
+  layouts/                # 页面布局（含主题切换）
+  pages/                  # 路由页面
+  stores/                 # Pinia 状态管理
+  utils/                  # 工具函数
+server/                   # Nitro 后端
+  api/                    # API 端点
+  services/               # 图片 / 视频 / Telegram 服务
+  utils/                  # 配置、日志、文件清理
 ```
 
 ## License

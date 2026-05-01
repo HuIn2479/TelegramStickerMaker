@@ -1,27 +1,12 @@
 <template>
   <div class="section-stack">
-    <!-- FFmpeg 下载确认 -->
-    <div v-if="showFfmpegPrompt" class="workbench-panel ffmpeg-prompt">
-      <div class="workbench-header">
-        <strong>需要加载视频处理组件</strong>
-        <div class="text-secondary">首次使用需下载 FFmpeg WebAssembly (~30MB)，之后会缓存在浏览器中</div>
-      </div>
-      <div class="ffmpeg-actions">
-        <button class="kv-action" type="button" @click="confirmLoadFfmpeg" :disabled="ffmpegLoading">
-          {{ ffmpegLoading ? `加载中 ${loadProgress}%...` : '确认下载并加载' }}
-        </button>
-        <button class="kv-action secondary" type="button" @click="showFfmpegPrompt = false" :disabled="ffmpegLoading">取消</button>
-      </div>
-      <div v-if="ffmpegError" class="error-text">{{ ffmpegError }}</div>
-    </div>
-
     <div class="workbench-panel">
       <div class="workbench-header">
         <div>
           <strong>动态贴纸转换</strong>
-          <div class="text-secondary">GIF / MP4 / WEBM → WEBM VP9（客户端处理）</div>
+          <div class="text-secondary">GIF / MP4 / WEBM → WEBM VP9</div>
         </div>
-        <div class="chip">默认 3 秒</div>
+        <div class="chip">默认 2 秒</div>
       </div>
       <UploadZone
         title="拖拽视频到此处"
@@ -41,18 +26,16 @@
       </div>
       <div class="workbench-actions">
         <button class="kv-action" type="button" @click="convertAll" :disabled="pendingCount === 0 || converting">全部转换</button>
-        <button class="kv-action secondary" type="button" @click="downloadAll" :disabled="doneCount === 0">下载 WEBM</button>
         <button class="kv-action secondary" type="button" @click="clearAll">清空</button>
       </div>
 
-      <!-- 当前转换进度 -->
       <div v-if="converting" class="convert-progress">
         <div class="progress-bar">
-          <div class="progress-fill" :style="{ width: convertProgress + '%' }"></div>
+          <div class="progress-fill" :style="{ width: overallProgress + '%' }"></div>
         </div>
         <div class="history-meta">
-          <span>{{ convertLog || '转换中...' }}</span>
-          <span>{{ convertProgress }}%</span>
+          <span>{{ convertStatus }}</span>
+          <span>{{ overallProgress }}%</span>
         </div>
       </div>
 
@@ -71,7 +54,7 @@
           </div>
           <div class="history-actions">
             <button class="kv-action secondary" type="button" @click="convertSingle(task)" :disabled="task.status === 'converting' || converting">转换</button>
-            <button class="kv-action secondary" type="button" @click="downloadOne(task)" :disabled="!task.result?.blob">WEBM</button>
+            <button class="kv-action secondary" type="button" @click="downloadOne(task)" :disabled="!task.result">下载</button>
             <button class="kv-action secondary" type="button" @click="removeTask(task.id)">移除</button>
           </div>
         </article>
@@ -85,13 +68,23 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import UploadZone from '@/components/ui/UploadZone.vue'
 import { useHistoryStore } from '@/stores/history'
 import { formatFileSize } from '@/utils/format'
-import { useFfmpeg } from '@/composables/useFfmpeg'
 import { useLightbox } from '@/composables/useLightbox'
 
+interface VideoTaskResult {
+  filename: string
+  width: number
+  height: number
+  duration: number
+  size: number
+}
+
 interface VideoTask {
-  id: string; file: File; name: string; previewUrl: string
+  id: string
+  file: File
+  name: string
+  previewUrl: string
   status: 'pending' | 'converting' | 'done' | 'error'
-  result: { blob: Blob; url: string; filename: string; size: number } | null
+  result: VideoTaskResult | null
   error: string
 }
 
@@ -102,20 +95,15 @@ const limits = reactive({ maxVideoFiles: 100 })
 const historyStore = useHistoryStore()
 const lightbox = useLightbox()
 
-const {
-  loaded: ffmpegLoaded,
-  loading: ffmpegLoading,
-  loadProgress,
-  error: ffmpegError,
-  converting,
-  convertProgress,
-  convertLog,
-  load: loadFfmpeg,
-  convertToWebm,
-  uploadConvertedFile
-} = useFfmpeg()
+const converting = ref(false)
+const convertStatus = ref('')
+const currentTaskIndex = ref(0)
+const totalTasks = ref(0)
 
-const showFfmpegPrompt = ref(false)
+const overallProgress = computed(() => {
+  if (totalTasks.value === 0) return 0
+  return Math.round((currentTaskIndex.value / totalTasks.value) * 100)
+})
 
 onMounted(async () => {
   try {
@@ -145,55 +133,39 @@ const handleFilesSelected = (files: File[]) => {
   })
 }
 
-const ensureFfmpeg = async (): Promise<boolean> => {
-  if (ffmpegLoaded.value) return true
-  showFfmpegPrompt.value = true
-  // Wait for user to confirm
-  return new Promise((resolve) => {
-    const unwatch = setInterval(() => {
-      if (ffmpegLoaded.value) { clearInterval(unwatch); resolve(true) }
-      if (!showFfmpegPrompt.value && !ffmpegLoading.value) { clearInterval(unwatch); resolve(false) }
-    }, 200)
-  })
-}
-
-const confirmLoadFfmpeg = async () => {
-  const success = await loadFfmpeg()
-  if (success) showFfmpegPrompt.value = false
-}
-
 const convertSingle = async (task: VideoTask) => {
   if (!task || task.status === 'converting' || converting.value) return
 
-  const ready = await ensureFfmpeg()
-  if (!ready) return
+  task.status = 'converting'
+  task.error = ''
 
-  task.status = 'converting'; task.error = ''
   try {
-    const result = await convertToWebm(task.file, 0, 3)
-    if (!result) throw new Error(ffmpegError.value || '转换失败')
+    const formData = new FormData()
+    formData.append('video', task.file, task.name)
 
-    // Create local URL for preview/download
-    const blobUrl = URL.createObjectURL(result.blob)
+    const res = await fetch('/api/convert-video', { method: 'POST', body: formData })
+    const data = await res.json()
+
+    if (!res.ok) {
+      throw new Error(data.message || '转换失败')
+    }
 
     task.status = 'done'
     task.result = {
-      blob: result.blob,
-      url: blobUrl,
-      filename: result.filename,
-      size: result.size
+      filename: data.result.filename,
+      width: data.result.width,
+      height: data.result.height,
+      duration: data.result.duration,
+      size: data.result.size
     }
-
-    // Upload to server for Telegram integration
-    await uploadConvertedFile(result.blob, result.filename)
 
     historyStore.add({
       type: 'video',
       fileName: task.name.replace(/\.[^.]+$/, ''),
-      preview: blobUrl,
-      duration: result.duration,
+      preview: task.previewUrl,
+      duration: data.result.duration,
       size: task.file.size,
-      result: { webm: blobUrl }
+      result: { webm: data.result.filename }
     })
   } catch (error: any) {
     task.status = 'error'
@@ -202,44 +174,36 @@ const convertSingle = async (task: VideoTask) => {
 }
 
 const convertAll = async () => {
-  const ready = await ensureFfmpeg()
-  if (!ready) return
-  for (const t of tasks.value.filter(i => i.status === 'pending')) {
-    await convertSingle(t)
+  const pending = tasks.value.filter(t => t.status === 'pending')
+  if (!pending.length) return
+
+  converting.value = true
+  totalTasks.value = pending.length
+  currentTaskIndex.value = 0
+
+  for (const task of pending) {
+    currentTaskIndex.value++
+    convertStatus.value = `正在转换 ${currentTaskIndex.value}/${totalTasks.value}: ${task.name}`
+    await convertSingle(task)
   }
+
+  converting.value = false
+  convertStatus.value = ''
 }
 
 const downloadOne = (task: VideoTask) => {
-  if (!task.result?.blob) return
-  const a = document.createElement('a')
-  a.href = task.result.url
-  a.download = `${task.name.replace(/\.[^.]+$/, '')}.webm`
-  a.click()
-}
-
-const downloadAll = async () => {
-  const done = tasks.value.filter(t => t.status === 'done' && t.result?.blob)
-  if (!done.length) return
-
-  // Download individually since we have blobs client-side
-  for (const task of done) {
-    downloadOne(task)
-    await new Promise(r => setTimeout(r, 200))
-  }
+  if (!task.result?.filename) return
+  window.open(`/api/telegram/file/${task.result.filename}`, '_blank')
 }
 
 const removeTask = (id: string) => {
   const t = tasks.value.find(t => t.id === id)
   if (t?.previewUrl) URL.revokeObjectURL(t.previewUrl)
-  if (t?.result?.url) URL.revokeObjectURL(t.result.url)
   tasks.value = tasks.value.filter(t => t.id !== id)
 }
 
 const clearAll = () => {
-  tasks.value.forEach(t => {
-    if (t.previewUrl) URL.revokeObjectURL(t.previewUrl)
-    if (t.result?.url) URL.revokeObjectURL(t.result.url)
-  })
+  tasks.value.forEach(t => { if (t.previewUrl) URL.revokeObjectURL(t.previewUrl) })
   tasks.value = []
 }
 
@@ -249,14 +213,6 @@ const openPreview = (task: VideoTask) => {
 </script>
 
 <style scoped>
-.ffmpeg-prompt {
-  border-color: var(--color-warning);
-}
-.ffmpeg-actions {
-  display: flex;
-  gap: var(--gap-sm);
-  margin-top: var(--gap-sm);
-}
 .convert-progress {
   margin-top: var(--gap-md);
 }

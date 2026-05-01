@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import KvHero from '@/components/kv/KvHero.vue'
 import WorkbenchShell from '@/components/workbench/WorkbenchShell.vue'
 import SegmentedTabs from '@/components/ui/SegmentedTabs.vue'
@@ -25,12 +25,31 @@ import ImageWorkbench from '@/components/workbench/ImageWorkbench.vue'
 import VideoWorkbench from '@/components/workbench/VideoWorkbench.vue'
 import TelegramWorkbench from '@/components/workbench/TelegramWorkbench.vue'
 
-const tabs = [
-  { key: 'image', label: '静态贴纸' },
-  { key: 'video', label: '动态贴纸' },
-  { key: 'telegram', label: 'Telegram' },
-  { key: 'history', label: '历史记录' }
-]
+const ffmpegAvailable = ref(true)
+const ffmpegVersion = ref<string | null>(null)
+
+onMounted(async () => {
+  try {
+    const res = await fetch('/api/ffmpeg-check')
+    if (res.ok) {
+      const data = await res.json()
+      ffmpegAvailable.value = data.available
+      ffmpegVersion.value = data.version
+    }
+  } catch {
+    ffmpegAvailable.value = false
+  }
+})
+
+const tabs = computed(() => {
+  const items = [
+    { key: 'image', label: '静态贴纸' },
+    ...(ffmpegAvailable.value ? [{ key: 'video', label: '动态贴纸' }] : []),
+    { key: 'telegram', label: 'Telegram' },
+    { key: 'history', label: '历史记录' }
+  ]
+  return items
+})
 
 const activeTab = ref('image')
 </script>

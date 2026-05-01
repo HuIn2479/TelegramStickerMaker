@@ -42,11 +42,10 @@ button {
 }
 
 ::selection {
-  background: var(--color-text);
-  color: var(--color-bg);
+  background: var(--color-accent);
+  color: #ffffff;
 }
 
-/* Mobile tap highlight */
 @media (max-width: 600px) {
   html {
     -webkit-tap-highlight-color: transparent;
