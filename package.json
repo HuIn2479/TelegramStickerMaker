@@ -2,6 +2,9 @@
   "name": "TelegramStickerMaker",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -20,7 +23,7 @@
     "@pinia/nuxt": "^1.0.1",
     "archiver": "^8.0.0",
     "form-data": "^4.0.6",
-    "nuxt": "^4.4.8",
+    "nuxt": "^4.5.2",
     "oxc-parser": "^0.140.0",
     "pinia": "^4.0.2",
     "sharp": "^0.35.3",
@@ -38,7 +41,7 @@
     "glob": "^10.5.0",
     "launch-editor": "^2.14.1",
     "shell-quote": "^1.8.4",
-    "vite": "^7.3.4",
+    "vite": "^8.2.0",
     "ws": "^8.21.0"
   }
 }
