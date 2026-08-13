@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@emnapi/core": "^1.11.3",
-    "@emnapi/runtime": "^1.11.2",
+    "@emnapi/runtime": "^1.11.3",
     "@ffmpeg/core": "^0.12.10",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
