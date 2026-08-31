@@ -27,7 +27,7 @@
     "oxc-parser": "^0.144.0",
     "pinia": "^4.0.2",
     "sharp": "^0.35.3",
-    "vue": "^3.5.41",
+    "vue": "^3.5.42",
     "vue-router": "^5.0.6"
   },
   "devDependencies": {
